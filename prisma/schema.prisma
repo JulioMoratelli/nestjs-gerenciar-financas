@@ -91,4 +91,5 @@ model Parcela{
   cliente     Cliente @relation(fields: [clienteId], references: [id])
   lancamento  Lancamento @relation(fields: [lancamentoId], references: [id])
   conta       Conta?   @relation(fields: [contaId], references: [id])
+  @@map("parcelas")
 }
