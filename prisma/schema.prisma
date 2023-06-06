@@ -1,0 +1,94 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Cliente{
+  id        Int @id @default(autoincrement())
+  email     String @unique
+  cpf       Int @unique
+  nome      String
+  sobrenome String
+  saldo     Decimal @default(0)
+  enderecos Endereco[]
+  contas    Conta[]
+  creditos   Credito[]
+  lancamentos Lancamento[]
+  parcelas   Parcela[]
+
+  @@map("clientes")
+}
+
+model Endereco{
+  id          Int @id @default(autoincrement())
+  clienteId   Int
+  padrao      Boolean
+  rua         String
+  numero      Int
+  bairro      String
+  complemento String?
+  cidade      String
+  cep         Int
+ 
+  cliente     Cliente @relation(fields: [clienteId], references: [id])
+  @@map("enderecos")
+}
+
+model Conta{
+  id          Int @id @default(autoincrement())
+  clienteId   Int 
+  nome        String @unique
+  saldo       Decimal @default(0)
+  credito     Credito []
+  parcela     Parcela[]
+
+
+  cliente     Cliente @relation(fields: [clienteId], references: [id])
+  @@map("contas")
+}
+
+model Credito{
+  id          Int @id @default(autoincrement())
+  clienteId   Int
+  contaId     Int
+  valor       Decimal
+
+  cliente     Cliente @relation(fields: [clienteId], references: [id])
+  conta       Conta   @relation(fields: [contaId], references: [id])
+  @@map("creditos")
+}
+
+model Lancamento{
+  id          Int @id @default(autoincrement())
+  clienteId   Int
+  descricao   String
+  valorTotal  Decimal
+  numeroParcelas Int
+  status      String
+  parcela    Parcela[]
+
+  cliente     Cliente @relation(fields: [clienteId], references: [id])
+  @@map("lancamentos")
+}
+
+model Parcela{
+  id          Int @id @default(autoincrement())
+  clienteId   Int
+  lancamentoId Int
+  contaId     Int? @default(0)
+  numeroParcela Int
+  vencimento  DateTime
+  valor       Decimal
+  pago        Boolean @default(false)
+
+  cliente     Cliente @relation(fields: [clienteId], references: [id])
+  lancamento  Lancamento @relation(fields: [lancamentoId], references: [id])
+  conta       Conta?   @relation(fields: [contaId], references: [id])
+}
