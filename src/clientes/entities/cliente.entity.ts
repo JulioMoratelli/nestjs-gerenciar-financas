@@ -1,8 +1,10 @@
-export class Cliente implements Cliente {
+import { Cliente, Prisma } from '@prisma/client';
+
+export class Clientes implements Cliente {
   id: number;
   email: string;
-  cpf: any;
+  cpf: number;
   nome: string;
   sobrenome: string;
-  saldo: number;
+  saldo: Prisma.Decimal;
 }
