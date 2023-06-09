@@ -1,10 +1,11 @@
-import { Cliente, Prisma } from '@prisma/client';
+import { Cliente } from '@prisma/client';
+import { Decimal } from '@prisma/client/runtime';
 
-export class Clientes implements Cliente {
+export class ClientesEntity implements Cliente {
   id: number;
   email: string;
   cpf: number;
   nome: string;
   sobrenome: string;
-  saldo: Prisma.Decimal;
+  saldo: Decimal;
 }
