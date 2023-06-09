@@ -1,12 +1,21 @@
+import { IsNotEmpty, IsEmail } from 'class-validator';
 import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
+import { PrismaService } from './prisma/prisma.service';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  async getHello() {
+    const teste = await this.prisma.cliente.create({
+      data: {
+        email: 'julio@testeteste.com',
+        cpf: 24021874844,
+        nome: 'teste',
+        sobrenome: 'teste',
+      },
+    });
+    return teste;
   }
 }
