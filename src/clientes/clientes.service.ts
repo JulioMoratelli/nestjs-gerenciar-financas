@@ -11,6 +11,10 @@ export class ClientesService {
     return this.repository.create(createClienteDto);
   }
 
+  findAll() {
+    return this.repository.findAll();
+  }
+
   findOne(id: number) {
     return this.repository.findOne(id);
   }

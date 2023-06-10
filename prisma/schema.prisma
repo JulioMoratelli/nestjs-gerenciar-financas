@@ -10,10 +10,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+
 model Cliente{
+  
   id        Int @id @default(autoincrement())
   email     String @unique
-  cpf       Int @unique
+  cpf       Int @unique 
   nome      String
   sobrenome String
   saldo     Decimal @default(0)

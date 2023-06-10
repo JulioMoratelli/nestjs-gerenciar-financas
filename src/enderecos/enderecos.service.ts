@@ -1,26 +1,29 @@
 import { Injectable } from '@nestjs/common';
 import { CreateEnderecoDto } from './dto/create-endereco.dto';
 import { UpdateEnderecoDto } from './dto/update-endereco.dto';
+import { EnderecosRepository } from './repositories/enderecos.repository';
 
 @Injectable()
 export class EnderecosService {
+  constructor(private readonly repository: EnderecosRepository) {}
+
   create(createEnderecoDto: CreateEnderecoDto) {
-    return 'This action adds a new endereco';
+    return this.repository.create(createEnderecoDto);
   }
 
-  findAll() {
-    return `This action returns all enderecos`;
+  findAll(clienteId: number) {
+    return this.repository.findAll(clienteId);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} endereco`;
+  findOne(clienteId: number, id: number) {
+    return this.repository.findOne(clienteId, id);
   }
 
   update(id: number, updateEnderecoDto: UpdateEnderecoDto) {
-    return `This action updates a #${id} endereco`;
+    return this.repository.update(id, updateEnderecoDto);
   }
 
   remove(id: number) {
-    return `This action removes a #${id} endereco`;
+    return this.repository.remove(id);
   }
 }

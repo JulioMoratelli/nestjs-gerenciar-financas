@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { EnderecosService } from './enderecos.service';
 import { CreateEnderecoDto } from './dto/create-endereco.dto';
 import { UpdateEnderecoDto } from './dto/update-endereco.dto';
@@ -13,17 +21,20 @@ export class EnderecosController {
   }
 
   @Get()
-  findAll() {
-    return this.enderecosService.findAll();
+  findAll(clienteId: number) {
+    return this.enderecosService.findAll(clienteId);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.enderecosService.findOne(+id);
+  findOne(@Param('clienteId') clienteId: number, @Param('id') id: string) {
+    return this.enderecosService.findOne(clienteId, +id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateEnderecoDto: UpdateEnderecoDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateEnderecoDto: UpdateEnderecoDto,
+  ) {
     return this.enderecosService.update(+id, updateEnderecoDto);
   }
 

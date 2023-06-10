@@ -10,8 +10,8 @@ export class AppController {
   async getHello() {
     const teste = await this.prisma.cliente.create({
       data: {
-        email: 'julio@testeteste.com',
-        cpf: 24021874844,
+        email: 'aaaaa@gmail.com',
+        cpf: 111,
         nome: 'teste',
         sobrenome: 'teste',
       },
