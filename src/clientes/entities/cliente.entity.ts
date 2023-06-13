@@ -4,7 +4,7 @@ import { Decimal } from '@prisma/client/runtime';
 export class ClientesEntity implements Cliente {
   id: number;
   email: string;
-  cpf: number;
+  cpf: string;
   nome: string;
   sobrenome: string;
   saldo: Decimal;

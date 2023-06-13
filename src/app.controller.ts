@@ -1,4 +1,3 @@
-import { IsNotEmpty, IsEmail } from 'class-validator';
 import { Controller, Get } from '@nestjs/common';
 import { PrismaService } from './prisma/prisma.service';
 
@@ -10,10 +9,10 @@ export class AppController {
   async getHello() {
     const teste = await this.prisma.cliente.create({
       data: {
-        email: 'aaaaa@gmail.com',
-        cpf: 111,
-        nome: 'teste',
-        sobrenome: 'teste',
+        email: 'ggggggg@gmail.com',
+        cpf: '240218',
+        nome: 'testeY',
+        sobrenome: 'testeY',
       },
     });
     return teste;

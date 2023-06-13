@@ -7,7 +7,7 @@ export class CreateClienteDto {
 
   @IsNumber()
   @IsNotEmpty()
-  cpf: number;
+  cpf: string;
 
   @IsString()
   @IsNotEmpty()
