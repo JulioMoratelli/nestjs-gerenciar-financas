@@ -12,11 +12,12 @@ export class EnderecosRepository {
   async create(createEnderecoDto: CreateEnderecoDto): Promise<EnderecoEntity> {
     const { clienteId } = createEnderecoDto;
 
-    delete createEnderecoDto.clienteId;
-
     const cliente = await this.prisma.cliente.findUnique({
       where: {
         id: clienteId,
+      },
+      include: {
+        enderecos: true,
       },
     });
 

@@ -9,12 +9,12 @@ export class AppController {
   async getHello() {
     const teste = await this.prisma.endereco.create({
       data: {
-        bairro: 'netinho',
-        cep: 17208190,
-        cidade: 'jau',
-        numero: 144,
-        padrao: false,
-        rua: 'adolfo diamente',
+        bairro: 'ccccc',
+        cep: 17,
+        cidade: 'ccccc',
+        numero: 50,
+        padrao: true,
+        rua: 'ccccc',
         clienteId: 1,
       },
     });
