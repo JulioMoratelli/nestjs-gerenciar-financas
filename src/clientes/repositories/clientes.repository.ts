@@ -31,6 +31,12 @@ export class ClientesRepository {
           where: {
             padrao: true,
           },
+          select: {
+            rua: true,
+            bairro: true,
+            numero: true,
+            cidade: true,
+          },
         },
       },
     });

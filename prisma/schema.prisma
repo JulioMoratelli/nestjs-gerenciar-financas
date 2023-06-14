@@ -15,7 +15,7 @@ model Cliente{
   
   id        Int @id @default(autoincrement())
   email     String @unique
-  cpf       Int @unique 
+  cpf       String @unique 
   nome      String
   sobrenome String
   saldo     Decimal @default(0)
@@ -30,7 +30,7 @@ model Cliente{
 
 model Endereco{
   id          Int @id @default(autoincrement())
-  clienteId   Int @unique
+  clienteId   Int 
   padrao      Boolean
   rua         String
   numero      Int

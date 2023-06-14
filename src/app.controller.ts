@@ -7,12 +7,15 @@ export class AppController {
 
   @Get()
   async getHello() {
-    const teste = await this.prisma.cliente.create({
+    const teste = await this.prisma.endereco.create({
       data: {
-        email: 'ggggggg@gmail.com',
-        cpf: '240218',
-        nome: 'testeY',
-        sobrenome: 'testeY',
+        bairro: 'netinho',
+        cep: 17208190,
+        cidade: 'jau',
+        numero: 144,
+        padrao: false,
+        rua: 'adolfo diamente',
+        clienteId: 1,
       },
     });
     return teste;
