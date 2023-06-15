@@ -3,16 +3,17 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateClienteDto } from '../dto/create-cliente.dto';
 import { UpdateClienteDto } from '../dto/update-cliente.dto';
 import { ClientesEntity } from '../entities/cliente.entity';
-import { cpf } from 'cpf-cnpj-validator';
+import { cnpj, cpf } from 'cpf-cnpj-validator';
 
 @Injectable()
 export class ClientesRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   create(createClienteDto: CreateClienteDto): Promise<ClientesEntity> {
-    const validandoCpfCnpj = cpf.isValid(createClienteDto.cpf);
+    const validarCpf = cpf.isValid(createClienteDto.cpf);
+    const validarCnpj = cnpj.isValid(createClienteDto.cpf);
 
-    if (!validandoCpfCnpj) {
+    if (!validarCpf && !validarCnpj) {
       throw new Error('cpf ou cnpj invalido');
     }
 
@@ -32,6 +33,7 @@ export class ClientesRepository {
             padrao: true,
           },
           select: {
+            id: true,
             rua: true,
             bairro: true,
             numero: true,

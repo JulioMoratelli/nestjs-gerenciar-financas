@@ -25,26 +25,16 @@ export class EnderecosRepository {
       throw new Error('Cliente não existe');
     }
 
-    const veficarEnderecoPadrao = cliente.enderecos.some(
+    const verificarEnderecoPadrao = cliente.enderecos.find(
       (endereco) => endereco.padrao,
     );
 
-    if (veficarEnderecoPadrao) {
-      throw new Error('Ja existe um endereco padrão');
+    if (verificarEnderecoPadrao) {
+      console.log('Já existe um endereço padrão');
     }
 
-    const data: Prisma.EnderecoCreateInput = {
-      ...createEnderecoDto,
-      cliente: {
-        connect: {
-          id: clienteId,
-        },
-      },
-      padrao: false,
-    };
-
     return this.prisma.endereco.create({
-      data,
+      data: createEnderecoDto,
     });
   }
 
