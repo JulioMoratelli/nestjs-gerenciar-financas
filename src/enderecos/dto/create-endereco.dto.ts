@@ -12,7 +12,7 @@ export class CreateEnderecoDto {
 
   @IsBoolean()
   @IsNotEmpty()
-  padrão: boolean;
+  padrao: boolean;
 
   @IsString()
   @IsNotEmpty()
@@ -34,7 +34,7 @@ export class CreateEnderecoDto {
   @IsNotEmpty()
   cidade: string;
 
-  @IsString()
+  @IsNumber()
   @IsNotEmpty()
   cep: number;
 }

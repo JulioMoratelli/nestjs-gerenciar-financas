@@ -25,6 +25,14 @@ export class EnderecosRepository {
       throw new Error('Cliente não existe');
     }
 
+    const veficarEnderecoPadrao = cliente.enderecos.some(
+      (endereco) => endereco.padrao,
+    );
+
+    if (veficarEnderecoPadrao) {
+      throw new Error('Ja existe um endereco padrão');
+    }
+
     const data: Prisma.EnderecoCreateInput = {
       ...createEnderecoDto,
       cliente: {
@@ -49,10 +57,12 @@ export class EnderecosRepository {
   }
 
   async findOne(clienteId: number, id: number): Promise<EnderecoEntity> {
-    return this.prisma.endereco.findUnique({
+    return this.prisma.endereco.findFirst({
       where: {
-        id,
-        // clienteId,
+        id: id,
+        cliente: {
+          id: clienteId,
+        },
       },
     });
   }

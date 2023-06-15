@@ -1,23 +1,12 @@
 import { Controller, Get } from '@nestjs/common';
-import { PrismaService } from './prisma/prisma.service';
+import { AppService } from './app.service';
 
 @Controller()
 export class AppController {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly appService: AppService) {}
 
   @Get()
-  async getHello() {
-    const teste = await this.prisma.endereco.create({
-      data: {
-        bairro: 'ccccc',
-        cep: 17,
-        cidade: 'ccccc',
-        numero: 50,
-        padrao: true,
-        rua: 'ccccc',
-        clienteId: 1,
-      },
-    });
-    return teste;
+  getHello(): string {
+    return this.appService.getHello();
   }
 }
