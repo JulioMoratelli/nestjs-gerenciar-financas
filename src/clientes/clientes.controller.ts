@@ -10,6 +10,7 @@ import {
 import { ClientesService } from './clientes.service';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
+import { ClientesExtendedEntity } from './repositories/clientes.repository';
 
 @Controller('clientes')
 export class ClientesController {
@@ -21,7 +22,7 @@ export class ClientesController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: string): Promise<ClientesExtendedEntity> {
     return this.clientesService.findOne(+id);
   }
 

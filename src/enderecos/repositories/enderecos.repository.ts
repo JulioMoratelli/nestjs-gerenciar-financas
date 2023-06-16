@@ -12,6 +12,8 @@ export class EnderecosRepository {
   async create(createEnderecoDto: CreateEnderecoDto): Promise<EnderecoEntity> {
     const { clienteId } = createEnderecoDto;
 
+    // const data: Prisma.EnderecoCreateInput = {};
+
     const cliente = await this.prisma.cliente.findUnique({
       where: {
         id: clienteId,
@@ -23,14 +25,6 @@ export class EnderecosRepository {
 
     if (!cliente) {
       throw new Error('Cliente não existe');
-    }
-
-    const verificarEnderecoPadrao = cliente.enderecos.find(
-      (endereco) => endereco.padrao,
-    );
-
-    if (verificarEnderecoPadrao) {
-      console.log('Já existe um endereço padrão');
     }
 
     return this.prisma.endereco.create({

@@ -5,6 +5,10 @@ import { UpdateClienteDto } from '../dto/update-cliente.dto';
 import { ClientesEntity } from '../entities/cliente.entity';
 import { cnpj, cpf } from 'cpf-cnpj-validator';
 
+export interface ClientesExtendedEntity extends ClientesEntity {
+  nomeCompleto: string;
+}
+
 @Injectable()
 export class ClientesRepository {
   constructor(private readonly prisma: PrismaService) {}
@@ -22,8 +26,8 @@ export class ClientesRepository {
     });
   }
 
-  findOne(id: number): Promise<ClientesEntity> {
-    return this.prisma.cliente.findUnique({
+  async findOne(id: number): Promise<ClientesExtendedEntity> {
+    const cliente = await this.prisma.cliente.findUnique({
       where: {
         id,
       },
@@ -42,10 +46,21 @@ export class ClientesRepository {
         },
       },
     });
+
+    if (cliente) {
+      const nomeCompleto = `${cliente.nome} ${cliente.sobrenome}`;
+      return { ...cliente, nomeCompleto };
+    }
+    return null;
   }
 
-  async findAll(): Promise<ClientesEntity[]> {
-    return await this.prisma.cliente.findMany();
+  async findAll(): Promise<ClientesExtendedEntity[]> {
+    const clientes = await this.prisma.cliente.findMany();
+
+    return clientes.map((cliente) => {
+      const nomeCompleto = `${cliente.nome} ${cliente.sobrenome}`;
+      return { ...cliente, nomeCompleto };
+    });
   }
 
   update(
