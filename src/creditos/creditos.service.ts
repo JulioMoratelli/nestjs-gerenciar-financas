@@ -15,15 +15,15 @@ export class CreditosService {
     return this.repository.findAll(clienteId, id);
   }
 
-  findOne(id: number) {
-    return this.repository.findOne(id);
+  findOne(clineteId: number, id: number) {
+    return this.repository.findOne(id, clineteId);
   }
 
   update(id: number, clienteId: number, updateCreditoDto: UpdateCreditoDto) {
     return this.repository.update(id, clienteId, updateCreditoDto);
   }
 
-  remove(id: number) {
-    return this.repository.remove(id);
+  remove(clienteId: number, id: number) {
+    return this.repository.remove(clienteId, id);
   }
 }

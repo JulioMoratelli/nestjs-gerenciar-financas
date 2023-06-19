@@ -42,8 +42,8 @@ export class ContaRepository {
     await this.pertence(clienteId, id);
     return this.prisma.conta.findUnique({
       where: {
-        id,
         clienteId,
+        id,
       },
     });
   }

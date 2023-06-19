@@ -9,7 +9,7 @@ export class CreditoRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   private async pertence(clienteId: number, id: number): Promise<void> {
-    const verificandoExistencia = await this.prisma.credito.findUnique({
+    const verificandoExistencia = await this.prisma.credito.findFirst({
       where: {
         clienteId,
         id,
@@ -32,12 +32,17 @@ export class CreditoRepository {
 
   async findAll(clienteId: number, id: number): Promise<CreditoEntity[]> {
     await this.pertence(clienteId, id);
-    return this.prisma.credito.findMany();
+    return this.prisma.credito.findMany({
+      where: {
+        clienteId,
+      },
+    });
   }
 
-  findOne(id: number): Promise<CreditoEntity> {
+  findOne(id: number, clienteId: number): Promise<CreditoEntity> {
     return this.prisma.credito.findUnique({
       where: {
+        clienteId,
         id,
       },
     });
@@ -57,9 +62,10 @@ export class CreditoRepository {
     });
   }
 
-  remove(id: number): Promise<CreditoEntity> {
+  remove(id: number, clienteId: number): Promise<CreditoEntity> {
     return this.prisma.credito.delete({
       where: {
+        clienteId,
         id,
       },
     });
