@@ -1,75 +1,67 @@
-// import { Injectable } from '@nestjs/common';
-// import { CreateContaDto } from 'src/contas/dto/create-conta.dto';
-// import { UpdateContaDto } from 'src/contas/dto/update-conta.dto';
-// import { ContaEntity } from 'src/contas/entities/conta.entity';
-// import { PrismaService } from 'src/prisma/prisma.service';
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { CreateCreditoDto } from '../dto/create-credito.dto';
+import { UpdateCreditoDto } from '../dto/update-credito.dto';
+import { CreditoEntity } from '../entities/credito.entity';
 
-// @Injectable()
-// export class ContaRepository {
-//   constructor(private readonly prisma: PrismaService) {}
+@Injectable()
+export class CreditoRepository {
+  constructor(private readonly prisma: PrismaService) {}
 
-//   private async pertence(clienteId: number, id: number): Promise<void> {
-//     const verificandoExistencia = await this.prisma.conta.findUnique({
-//       where: {
-//         clienteId,
-//         id,
-//       },
-//     });
+  private async pertence(clienteId: number, id: number): Promise<void> {
+    const verificandoExistencia = await this.prisma.credito.findUnique({
+      where: {
+        clienteId,
+        id,
+      },
+    });
 
-//     if (
-//       !verificandoExistencia ||
-//       verificandoExistencia.clienteId !== clienteId
-//     ) {
-//       throw new Error('A conta não existe ou não pertence ao clienteId');
-//     }
-//   }
+    if (
+      !verificandoExistencia ||
+      verificandoExistencia.clienteId !== clienteId
+    ) {
+      throw new Error('O crédito não existe ou não pertence ao clienteId');
+    }
+  }
 
-//   async create(createContaDto: CreateContaDto): Promise<ContaEntity> {
-//     return this.prisma.conta.create({
-//       data: createContaDto,
-//     });
-//   }
+  async create(createCreditoDto: CreateCreditoDto): Promise<CreditoEntity> {
+    return this.prisma.credito.create({
+      data: createCreditoDto,
+    });
+  }
 
-//   async findAll(clienteId: number): Promise<ContaEntity[]> {
-//     return await this.prisma.conta.findMany({
-//       where: {
-//         clienteId,
-//       },
-//     });
-//   }
+  async findAll(clienteId: number, id: number): Promise<CreditoEntity[]> {
+    await this.pertence(clienteId, id);
+    return this.prisma.credito.findMany();
+  }
 
-//   async findOne(clienteId: number, id: number): Promise<ContaEntity> {
-//     await this.pertence(clienteId, id);
-//     return this.prisma.conta.findUnique({
-//       where: {
-//         id,
-//         clienteId,
-//       },
-//     });
-//   }
+  findOne(id: number): Promise<CreditoEntity> {
+    return this.prisma.credito.findUnique({
+      where: {
+        id,
+      },
+    });
+  }
 
-//   async update(
-//     clienteId: number,
-//     id: number,
-//     updateContaDto: UpdateContaDto,
-//   ): Promise<ContaEntity> {
-//     await this.pertence(clienteId, id);
-//     return await this.prisma.conta.update({
-//       where: {
-//         clienteId,
-//         id,
-//       },
-//       data: updateContaDto,
-//     });
-//   }
+  update(
+    id: number,
+    clienteId: number,
+    updateCreditoDto: UpdateCreditoDto,
+  ): Promise<CreditoEntity> {
+    return this.prisma.credito.update({
+      where: {
+        clienteId,
+        id,
+      },
+      data: updateCreditoDto,
+    });
+  }
 
-//   async remove(clienteId: number, id: number): Promise<ContaEntity> {
-//     await this.pertence(clienteId, id);
-//     return this.prisma.conta.delete({
-//       where: {
-//         clienteId,
-//         id,
-//       },
-//     });
-//   }
-// }
+  remove(id: number): Promise<CreditoEntity> {
+    return this.prisma.credito.delete({
+      where: {
+        id,
+      },
+    });
+  }
+}

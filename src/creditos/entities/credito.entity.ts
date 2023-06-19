@@ -6,5 +6,4 @@ export class CreditoEntity implements Credito {
   contaId: number;
   valor: Decimal;
   id: number;
-  email: string;
 }

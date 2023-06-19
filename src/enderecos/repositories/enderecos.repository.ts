@@ -41,12 +41,10 @@ export class EnderecosRepository {
   }
 
   async findOne(clienteId: number, id: number): Promise<EnderecoEntity> {
-    return this.prisma.endereco.findFirst({
+    return this.prisma.endereco.findUnique({
       where: {
-        id: id,
-        cliente: {
-          id: clienteId,
-        },
+        id,
+        clienteId,
       },
     });
   }

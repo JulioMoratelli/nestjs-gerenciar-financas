@@ -10,6 +10,7 @@ import {
 import { EnderecosService } from './enderecos.service';
 import { CreateEnderecoDto } from './dto/create-endereco.dto';
 import { UpdateEnderecoDto } from './dto/update-endereco.dto';
+import { EnderecoEntity } from './entities/endereco.entity';
 
 @Controller('enderecos')
 export class EnderecosController {
@@ -25,8 +26,11 @@ export class EnderecosController {
     return this.enderecosService.findAll(clienteId);
   }
 
-  @Get(':id')
-  findOne(@Param('clienteId') clienteId: number, @Param('id') id: string) {
+  @Get(':clienteId/:id')
+  findOne(
+    @Param('clienteId') clienteId: number,
+    @Param('id') id: string,
+  ): Promise<EnderecoEntity> {
     return this.enderecosService.findOne(clienteId, +id);
   }
 

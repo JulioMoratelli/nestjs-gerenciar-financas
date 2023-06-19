@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { CreditosService } from './creditos.service';
 import { CreateCreditoDto } from './dto/create-credito.dto';
 import { UpdateCreditoDto } from './dto/update-credito.dto';
@@ -13,8 +21,8 @@ export class CreditosController {
   }
 
   @Get()
-  findAll() {
-    return this.creditosService.findAll();
+  findAll(clienteId: number, id: number) {
+    return this.creditosService.findAll(clienteId, id);
   }
 
   @Get(':id')
@@ -23,8 +31,12 @@ export class CreditosController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCreditoDto: UpdateCreditoDto) {
-    return this.creditosService.update(+id, updateCreditoDto);
+  update(
+    @Param('id') id: string,
+    @Param('clienteId') clienteId: number,
+    @Body() updateCreditoDto: UpdateCreditoDto,
+  ) {
+    return this.creditosService.update(+id, clienteId, updateCreditoDto);
   }
 
   @Delete(':id')

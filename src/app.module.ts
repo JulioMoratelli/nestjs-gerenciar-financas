@@ -6,9 +6,18 @@ import { EnderecosModule } from './enderecos/enderecos.module';
 import { ContasModule } from './contas/contas.module';
 import { CreditosModule } from './creditos/creditos.module';
 import { PrismaService } from './prisma/prisma.service';
+import { LancamentosModule } from './lancamentos/lancamentos.module';
+import { ParcelasModule } from './parcelas/parcelas.module';
 
 @Module({
-  imports: [ClientesModule, EnderecosModule, ContasModule, CreditosModule],
+  imports: [
+    ClientesModule,
+    EnderecosModule,
+    ContasModule,
+    CreditosModule,
+    LancamentosModule,
+    ParcelasModule,
+  ],
   controllers: [AppController],
   providers: [AppService, PrismaService],
 })
