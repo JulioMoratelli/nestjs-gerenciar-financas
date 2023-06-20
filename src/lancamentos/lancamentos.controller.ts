@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { LancamentosService } from './lancamentos.service';
 import { CreateLancamentoDto } from './dto/create-lancamento.dto';
 import { UpdateLancamentoDto } from './dto/update-lancamento.dto';
@@ -13,22 +21,26 @@ export class LancamentosController {
   }
 
   @Get()
-  findAll() {
-    return this.lancamentosService.findAll();
+  findAll(@Param('clienteId') clienteId: number) {
+    return this.lancamentosService.findAll(clienteId);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.lancamentosService.findOne(+id);
+  findOne(@Param('clienteId') clienteId: number, @Param('id') id: string) {
+    return this.lancamentosService.findOne(+id, clienteId);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateLancamentoDto: UpdateLancamentoDto) {
-    return this.lancamentosService.update(+id, updateLancamentoDto);
+  update(
+    @Param('clienteId') clienteId: number,
+    @Param('id') id: string,
+    @Body() updateLancamentoDto: UpdateLancamentoDto,
+  ) {
+    return this.lancamentosService.update(clienteId, +id, updateLancamentoDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.lancamentosService.remove(+id);
+  remove(@Param('clienteId') clienteId: number, @Param('id') id: string) {
+    return this.lancamentosService.remove(+id, clienteId);
   }
 }

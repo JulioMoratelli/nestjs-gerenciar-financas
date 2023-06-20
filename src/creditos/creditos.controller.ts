@@ -21,13 +21,13 @@ export class CreditosController {
   }
 
   @Get()
-  findAll(clienteId: number, id: number) {
+  findAll(@Param('id') id: number, @Param('clienteId') clienteId: number) {
     return this.creditosService.findAll(clienteId, id);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.creditosService.findOne(+id);
+  findOne(@Param('id') id: string, @Param('clienteId') clienteId: number) {
+    return this.creditosService.findOne(+id, clienteId);
   }
 
   @Patch(':id')
@@ -40,7 +40,7 @@ export class CreditosController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.creditosService.remove(+id);
+  remove(@Param('id') id: string, @Param('clienteId') clienteId: number) {
+    return this.creditosService.remove(+id, clienteId);
   }
 }

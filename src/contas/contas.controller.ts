@@ -21,7 +21,7 @@ export class ContasController {
   }
 
   @Get()
-  findAll(clienteId: number) {
+  findAll(@Param('clienteId') clienteId: number) {
     return this.contasService.findAll(clienteId);
   }
 

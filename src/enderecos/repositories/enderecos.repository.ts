@@ -82,15 +82,17 @@ export class EnderecosRepository {
 
     return this.prisma.endereco.update({
       where: {
+        clienteId,
         id,
       },
       data,
     });
   }
 
-  remove(id: number): Promise<EnderecoEntity> {
+  remove(clienteId: number, id: number): Promise<EnderecoEntity> {
     return this.prisma.endereco.delete({
       where: {
+        clienteId,
         id,
       },
     });
