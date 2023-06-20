@@ -43,7 +43,7 @@ export class EnderecosController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.enderecosService.remove(+id);
+  remove(@Param('clienteId') clienteId: number, @Param('id') id: string) {
+    return this.enderecosService.remove(clienteId, +id);
   }
 }

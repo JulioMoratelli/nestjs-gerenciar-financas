@@ -16,7 +16,7 @@ export class LancamentosRepository {
     });
   }
 
-  async findAll(clienteId: number) {
+  async findAll(clienteId: number): Promise<LancamentoEntity[]> {
     return await this.prisma.lancamento.findMany({
       where: {
         clienteId,

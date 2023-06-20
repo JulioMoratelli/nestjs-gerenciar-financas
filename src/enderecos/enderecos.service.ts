@@ -23,7 +23,7 @@ export class EnderecosService {
     return this.repository.update(id, updateEnderecoDto);
   }
 
-  remove(id: number) {
-    return this.repository.remove(id);
+  remove(clienteId: number, id: number) {
+    return this.repository.remove(clienteId, id);
   }
 }

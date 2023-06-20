@@ -12,8 +12,6 @@ export class EnderecosRepository {
   async create(createEnderecoDto: CreateEnderecoDto): Promise<EnderecoEntity> {
     const { clienteId } = createEnderecoDto;
 
-    // const data: Prisma.EnderecoCreateInput = {};
-
     const cliente = await this.prisma.cliente.findUnique({
       where: {
         id: clienteId,

@@ -1,26 +1,29 @@
 import { Injectable } from '@nestjs/common';
 import { CreateParcelaDto } from './dto/create-parcela.dto';
 import { UpdateParcelaDto } from './dto/update-parcela.dto';
+import { ParcelasRepository } from './repositories/parcelas.repository';
 
 @Injectable()
 export class ParcelasService {
+  constructor(private readonly repository: ParcelasRepository) {}
+
   create(createParcelaDto: CreateParcelaDto) {
-    return 'This action adds a new parcela';
+    return this.repository.create(createParcelaDto);
   }
 
   findAll() {
-    return `This action returns all parcelas`;
+    return this.repository.findAll();
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} parcela`;
+    return this.repository.findOne(id);
   }
 
   update(id: number, updateParcelaDto: UpdateParcelaDto) {
-    return `This action updates a #${id} parcela`;
+    return this.repository.update(id, updateParcelaDto);
   }
 
   remove(id: number) {
-    return `This action removes a #${id} parcela`;
+    return this.repository.remove(id);
   }
 }
