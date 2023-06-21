@@ -63,6 +63,32 @@ export class ClientesRepository {
     });
   }
 
+  async findAllComEndereco(): Promise<ClientesExtendedEntity[]> {
+    const clientes = await this.prisma.cliente.findMany({
+      where: {
+        enderecos: {
+          some: {}, // Verifica se há pelo menos um endereço relacionado
+        },
+      },
+      include: {
+        enderecos: {
+          select: {
+            id: true,
+            rua: true,
+            bairro: true,
+            numero: true,
+            cidade: true,
+          },
+        },
+      },
+    });
+
+    return clientes.map((cliente) => {
+      const nomeCompleto = `${cliente.nome} ${cliente.sobrenome}`;
+      return { ...cliente, nomeCompleto };
+    });
+  }
+
   update(
     id: number,
     updateClienteDto: UpdateClienteDto,

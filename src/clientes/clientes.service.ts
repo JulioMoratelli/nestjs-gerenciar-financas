@@ -15,6 +15,10 @@ export class ClientesService {
     return this.repository.findAll();
   }
 
+  findAllClienteEndereco() {
+    return this.repository.findAllComEndereco();
+  }
+
   findOne(id: number) {
     return this.repository.findOne(id);
   }
