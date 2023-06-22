@@ -6,6 +6,7 @@ import { ClientesEntity } from '../entities/cliente.entity';
 import { cnpj, cpf } from 'cpf-cnpj-validator';
 
 export interface ClientesExtendedEntity extends ClientesEntity {
+  [x: string]: any;
   nomeCompleto: string;
 }
 
