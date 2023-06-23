@@ -20,7 +20,7 @@ export class ContasController {
     return this.contasService.create(createContaDto);
   }
 
-  @Get()
+  @Get(':clienteId')
   findAll(@Param('clienteId') clienteId: number) {
     return this.contasService.findAll(clienteId);
   }

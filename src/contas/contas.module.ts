@@ -7,5 +7,6 @@ import { ContaRepository } from './repositories/conta.repository';
 @Module({
   controllers: [ContasController],
   providers: [ContasService, PrismaService, ContaRepository],
+  exports: [ContasService, ContasModule],
 })
 export class ContasModule {}

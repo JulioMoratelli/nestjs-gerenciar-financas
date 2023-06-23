@@ -2,31 +2,33 @@ import { Injectable } from '@nestjs/common';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
 import { ClientesRepository } from './repositories/clientes.repository';
-import { Decimal } from '@prisma/client/runtime';
 import { cnpj, cpf } from 'cpf-cnpj-validator';
-import { ContaEntity } from 'src/contas/entities/conta.entity';
-import { Conta } from '@prisma/client';
-
-export interface ClientesExtendedEntity extends ContaEntity {
-  conta: Conta[];
-}
+import { ContasService } from 'src/contas/contas.service';
+import { Decimal } from '@prisma/client/runtime';
+import { ClientesEntity } from './entities/cliente.entity';
 
 @Injectable()
 export class ClientesService {
-  constructor(private readonly repository: ClientesRepository) {}
+  constructor(
+    private readonly repository: ClientesRepository,
+    private contasService: ContasService,
+    private clienteEntity: ClientesEntity,
+  ) {}
 
-  async SomaSaldoContas(id: number): Promise<void> {
-    const cliente = await this.repository.findOne(id);
-    const contas = cliente.conta;
-    let result = new Decimal(0);
+  async somaSaldoUsuario(clienteId: number) {
+    const contas = await this.contasService.findAll(clienteId);
+    let resultadoSaldoContas: Decimal = new Decimal(0) as Decimal;
 
-    contas.forEach((conta) => {
-      const saldoDecimal = new Decimal(conta.saldo);
-      result = result.add(saldoDecimal);
-    });
+    for (const conta of contas) {
+      resultadoSaldoContas = resultadoSaldoContas.plus(
+        new Decimal(conta.saldo) as Decimal,
+      );
+    }
 
-    cliente.saldo = result;
-    await this.repository.update(id, cliente);
+    await this.repository.updateSaldo(
+      clienteId,
+      resultadoSaldoContas.toNumber(),
+    );
   }
 
   create(createClienteDto: CreateClienteDto) {
@@ -40,7 +42,8 @@ export class ClientesService {
     return this.repository.create(createClienteDto);
   }
 
-  async findOne(id: number) {
+  async findOne(id: number, clienteId: number) {
+    await this.somaSaldoUsuario(clienteId);
     const cliente = await this.repository.findOne(id);
     if (cliente) {
       const nomeCompleto = `${cliente.nome} ${cliente.sobrenome}`;

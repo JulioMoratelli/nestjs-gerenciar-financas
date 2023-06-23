@@ -4,10 +4,11 @@ import { CreateClienteDto } from '../dto/create-cliente.dto';
 import { UpdateClienteDto } from '../dto/update-cliente.dto';
 import { ClientesEntity } from '../entities/cliente.entity';
 import { cnpj, cpf } from 'cpf-cnpj-validator';
+import { Decimal } from '@prisma/client/runtime';
 
 export interface ClientesExtendedEntity extends ClientesEntity {
-  [x: string]: any;
   nomeCompleto: string;
+  saldo: Decimal;
 }
 
 @Injectable()
@@ -99,6 +100,15 @@ export class ClientesRepository {
         id,
       },
       data: updateClienteDto,
+    });
+  }
+
+  async updateSaldo(id: number, saldo: number): Promise<ClientesEntity> {
+    return this.prisma.cliente.update({
+      where: {
+        id,
+      },
+      data: saldo,
     });
   }
 

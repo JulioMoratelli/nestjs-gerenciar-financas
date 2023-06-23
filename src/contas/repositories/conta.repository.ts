@@ -3,9 +3,15 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateContaDto } from '../dto/create-conta.dto';
 import { UpdateContaDto } from '../dto/update-conta.dto';
 import { ContaEntity } from '../entities/conta.entity';
+import { Decimal } from '@prisma/client/runtime';
+
+export interface ContaExtendedEntity extends ContaEntity {
+  saldo: Decimal;
+}
 
 @Injectable()
 export class ContaRepository {
+  saldo: Decimal;
   constructor(private readonly prisma: PrismaService) {}
 
   private async pertence(clienteId: number, id: number): Promise<void> {

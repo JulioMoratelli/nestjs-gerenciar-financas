@@ -78,9 +78,6 @@ CREATE UNIQUE INDEX "clientes_email_key" ON "clientes"("email");
 CREATE UNIQUE INDEX "clientes_cpf_key" ON "clientes"("cpf");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "contas_clienteId_key" ON "contas"("clienteId");
-
--- CreateIndex
 CREATE UNIQUE INDEX "contas_nome_key" ON "contas"("nome");
 
 -- AddForeignKey
