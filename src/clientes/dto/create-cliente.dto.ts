@@ -1,4 +1,5 @@
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { Decimal } from '@prisma/client/runtime';
+import { IsDecimal, IsEmail, IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateClienteDto {
   @IsEmail()

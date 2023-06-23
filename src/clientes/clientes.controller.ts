@@ -22,16 +22,13 @@ export class ClientesController {
   }
 
   @Get(':id')
-  findOne(
-    @Param('id') id: number,
-    clienteId: number,
-  ): Promise<ClientesExtendedEntity> {
-    return this.clientesService.findOne(+id, clienteId);
+  findOne(@Param('id') id: number): Promise<ClientesExtendedEntity> {
+    return this.clientesService.findOne(+id);
   }
 
   @Get()
-  findAllClienteEndereco(id: number) {
-    return this.clientesService.findAllClienteEndereco(id);
+  findAllClienteEndereco(id: number, clienteId: number) {
+    return this.clientesService.findAllClienteEndereco(id, clienteId);
   }
 
   @Patch(':id')
