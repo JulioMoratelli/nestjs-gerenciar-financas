@@ -7,7 +7,6 @@ import { cnpj, cpf } from 'cpf-cnpj-validator';
 import { Decimal } from '@prisma/client/runtime';
 
 export interface ClientesExtendedEntity extends ClientesEntity {
-  [x: string]: any;
   nomeCompleto: string;
   saldo: Decimal;
 }
@@ -70,7 +69,7 @@ export class ClientesRepository {
     const clientes = await this.prisma.cliente.findMany({
       where: {
         enderecos: {
-          some: {}, // Verifica se há pelo menos um endereço relacionado
+          some: {},
         },
       },
       include: {
@@ -101,6 +100,17 @@ export class ClientesRepository {
         id,
       },
       data: updateClienteDto,
+    });
+  }
+
+  updateSaldo(id: number, saldoAtual: Decimal): Promise<ClientesEntity> {
+    return this.prisma.cliente.update({
+      where: {
+        id,
+      },
+      data: {
+        saldo: saldoAtual,
+      },
     });
   }
 

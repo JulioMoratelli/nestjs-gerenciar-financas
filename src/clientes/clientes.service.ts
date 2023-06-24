@@ -2,46 +2,33 @@ import { Injectable } from '@nestjs/common';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
 import { ClientesRepository } from './repositories/clientes.repository';
-import { cnpj, cpf } from 'cpf-cnpj-validator';
+import { cpf } from 'cpf-cnpj-validator';
 import { Decimal } from '@prisma/client/runtime';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { ContaRepository } from 'src/contas/repositories/conta.repository';
 
 @Injectable()
 export class ClientesService {
   constructor(
     private readonly repository: ClientesRepository,
-    private prisma: PrismaService,
+    private contasRepository: ContaRepository,
   ) {}
 
-  public async somaSaldoCliente(clienteId: number): Promise<void> {
-    const contas = await this.prisma.conta.findMany({
-      where: {
-        clienteId: clienteId,
-      },
-    });
+  async atualizarSaldoCliente(clienteId: number): Promise<void> {
+    const contas = await this.contasRepository.findAll(clienteId);
 
+    console.log(contas);
     const saldoAtual = contas.reduce((acumulado, conta) => {
       const valorConta = new Decimal(conta.saldo);
       return new Decimal(acumulado).add(valorConta);
     }, new Decimal(0));
 
-    await this.prisma.cliente.update({
-      where: { id: clienteId },
-      data: { saldo: saldoAtual },
-    });
-
-    const clienteAtualizado = await this.repository.findOne(clienteId);
-    if (clienteAtualizado) {
-      clienteAtualizado.saldo = saldoAtual;
-      await clienteAtualizado.save();
-    }
+    await this.repository.updateSaldo(clienteId, saldoAtual);
   }
 
   create(createClienteDto: CreateClienteDto) {
     const validarCpf = cpf.isValid(createClienteDto.cpf);
-    const validarCnpj = cnpj.isValid(createClienteDto.cpf);
 
-    if (!validarCpf && !validarCnpj) {
+    if (!validarCpf) {
       throw new Error('cpf ou cnpj invalido');
     }
 
@@ -57,8 +44,8 @@ export class ClientesService {
     return null;
   }
 
-  async findAllClienteEndereco(id: number, clienteId: number) {
-    await this.somaSaldoCliente(clienteId);
+  async findAllClienteEndereco(id: number) {
+    await this.atualizarSaldoCliente(id);
     const cliente = await this.repository.findOne(id);
     if (cliente) {
       const nomeCompleto = `${cliente.nome} ${cliente.sobrenome}`;

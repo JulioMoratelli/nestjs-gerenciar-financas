@@ -26,9 +26,9 @@ export class ClientesController {
     return this.clientesService.findOne(+id);
   }
 
-  @Get()
-  findAllClienteEndereco(id: number, clienteId: number) {
-    return this.clientesService.findAllClienteEndereco(id, clienteId);
+  @Get('enderecos/:id')
+  findAllClienteEndereco(@Param('id') id: number) {
+    return this.clientesService.findAllClienteEndereco(id);
   }
 
   @Patch(':id')
