@@ -15,110 +15,142 @@ export interface ClientesExtendedEntity extends ClientesEntity {
 export class ClientesRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  create(createClienteDto: CreateClienteDto): Promise<ClientesEntity> {
-    const validarCpf = cpf.isValid(createClienteDto.cpf);
-    const validarCnpj = cnpj.isValid(createClienteDto.cpf);
+  async create(createClienteDto: CreateClienteDto): Promise<ClientesEntity> {
+    try {
+      const validarCpf = cpf.isValid(createClienteDto.cpf);
+      const validarCnpj = cnpj.isValid(createClienteDto.cpf);
 
-    if (!validarCpf && !validarCnpj) {
-      throw new Error('cpf ou cnpj invalido');
-    }
+      if (!validarCpf && !validarCnpj) {
+        throw new Error('cpf ou cnpj invalido');
+      }
 
-    return this.prisma.cliente.create({
-      data: createClienteDto,
-    });
+      return await this.prisma.$transaction(async (prisma) => {
+        const cliente = prisma.cliente.create({
+          data: createClienteDto,
+        });
+        return cliente;
+      });
+    } catch (err) {}
   }
 
   async findOne(id: number): Promise<ClientesExtendedEntity> {
-    const cliente = await this.prisma.cliente.findUnique({
-      where: {
-        id,
-      },
-      include: {
-        enderecos: {
+    try {
+      const cliente = await this.prisma.$transaction(async (prisma) => {
+        const cliente = prisma.cliente.findUnique({
           where: {
-            padrao: true,
+            id,
           },
-          select: {
-            id: true,
-            rua: true,
-            bairro: true,
-            numero: true,
-            cidade: true,
+          include: {
+            enderecos: {
+              where: {
+                padrao: true,
+              },
+              select: {
+                id: true,
+                rua: true,
+                bairro: true,
+                numero: true,
+                cidade: true,
+              },
+            },
           },
-        },
-      },
-    });
+        });
+        return cliente;
+      });
 
-    if (cliente) {
-      const nomeCompleto = `${cliente.nome} ${cliente.sobrenome}`;
-      return { ...cliente, nomeCompleto };
-    }
-    return null;
+      if (cliente) {
+        const nomeCompleto = `${cliente.nome} ${cliente.sobrenome}`;
+        return { ...cliente, nomeCompleto };
+      }
+      return null;
+    } catch (err) {}
   }
 
   async findAll(): Promise<ClientesExtendedEntity[]> {
-    const clientes = await this.prisma.cliente.findMany();
-
-    return clientes.map((cliente) => {
-      const nomeCompleto = `${cliente.nome} ${cliente.sobrenome}`;
-      return { ...cliente, nomeCompleto };
-    });
+    try {
+      return await this.prisma.$transaction(async (prisma) => {
+        const clientes = await prisma.cliente.findMany();
+        return clientes.map((cliente) => {
+          const nomeCompleto = `${cliente.nome} ${cliente.sobrenome}`;
+          return { ...cliente, nomeCompleto };
+        });
+      });
+    } catch (err) {}
   }
 
   async findAllComEndereco(): Promise<ClientesExtendedEntity[]> {
-    const clientes = await this.prisma.cliente.findMany({
-      where: {
-        enderecos: {
-          some: {},
-        },
-      },
-      include: {
-        enderecos: {
-          select: {
-            id: true,
-            rua: true,
-            bairro: true,
-            numero: true,
-            cidade: true,
+    try {
+      return await this.prisma.$transaction(async (prisma) => {
+        const clientes = await prisma.cliente.findMany({
+          where: {
+            enderecos: {
+              some: {},
+            },
           },
-        },
-      },
-    });
+          include: {
+            enderecos: {
+              select: {
+                id: true,
+                rua: true,
+                bairro: true,
+                numero: true,
+                cidade: true,
+              },
+            },
+          },
+        });
 
-    return clientes.map((cliente) => {
-      const nomeCompleto = `${cliente.nome} ${cliente.sobrenome}`;
-      return { ...cliente, nomeCompleto };
-    });
+        return clientes.map((cliente) => {
+          const nomeCompleto = `${cliente.nome} ${cliente.sobrenome}`;
+          return { ...cliente, nomeCompleto };
+        });
+      });
+    } catch (err) {}
   }
 
-  update(
+  async update(
     id: number,
     updateClienteDto: UpdateClienteDto,
   ): Promise<ClientesEntity> {
-    return this.prisma.cliente.update({
-      where: {
-        id,
-      },
-      data: updateClienteDto,
-    });
+    try {
+      return await this.prisma.$transaction(async (prisma) => {
+        const cliente = prisma.cliente.update({
+          where: {
+            id,
+          },
+          data: updateClienteDto,
+        });
+        return cliente;
+      });
+    } catch (err) {}
   }
 
-  updateSaldo(id: number, saldoAtual: Decimal): Promise<ClientesEntity> {
-    return this.prisma.cliente.update({
-      where: {
-        id,
-      },
-      data: {
-        saldo: saldoAtual,
-      },
-    });
+  async updateSaldo(id: number, saldoAtual: Decimal): Promise<ClientesEntity> {
+    try {
+      return await this.prisma.$transaction(async (prisma) => {
+        const cliente = prisma.cliente.update({
+          where: {
+            id,
+          },
+          data: {
+            saldo: saldoAtual,
+          },
+        });
+        return cliente;
+      });
+    } catch (err) {}
   }
 
-  remove(id: number): Promise<ClientesEntity> {
-    return this.prisma.cliente.delete({
-      where: {
-        id,
-      },
-    });
+  async remove(id: number): Promise<ClientesEntity> {
+    try {
+      return await this.prisma.$transaction(async (prisma) => {
+        const cliente = prisma.cliente.delete({
+          where: {
+            id,
+          },
+        });
+        return cliente;
+      });
+    } catch (err) {}
   }
 }
