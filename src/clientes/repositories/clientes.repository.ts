@@ -6,11 +6,6 @@ import { ClientesEntity } from '../entities/cliente.entity';
 import { cnpj, cpf } from 'cpf-cnpj-validator';
 import { Decimal } from '@prisma/client/runtime';
 
-export interface ClientesExtendedEntity extends ClientesEntity {
-  nomeCompleto: string;
-  saldo: Decimal;
-}
-
 @Injectable()
 export class ClientesRepository {
   constructor(private readonly prisma: PrismaService) {}
@@ -31,7 +26,7 @@ export class ClientesRepository {
     } catch (err) {}
   }
 
-  async findOne(id: number): Promise<ClientesExtendedEntity> {
+  async findOne(id: number): Promise<ClientesEntity> {
     try {
       const cliente = await this.prisma.cliente.findUnique({
         where: {
@@ -52,26 +47,11 @@ export class ClientesRepository {
           },
         },
       });
-
-      if (cliente) {
-        const nomeCompleto = `${cliente.nome} ${cliente.sobrenome}`;
-        return { ...cliente, nomeCompleto };
-      }
-      return null;
+      return cliente;
     } catch (err) {}
   }
 
-  async findAll(): Promise<ClientesExtendedEntity[]> {
-    try {
-      const clientes = await this.prisma.cliente.findMany();
-      return clientes.map((cliente) => {
-        const nomeCompleto = `${cliente.nome} ${cliente.sobrenome}`;
-        return { ...cliente, nomeCompleto };
-      });
-    } catch (err) {}
-  }
-
-  async findAllComEndereco(): Promise<ClientesExtendedEntity[]> {
+  async findAllComEndereco(): Promise<ClientesEntity[]> {
     try {
       const clientes = await this.prisma.cliente.findMany({
         where: {
@@ -91,11 +71,7 @@ export class ClientesRepository {
           },
         },
       });
-
-      return clientes.map((cliente) => {
-        const nomeCompleto = `${cliente.nome} ${cliente.sobrenome}`;
-        return { ...cliente, nomeCompleto };
-      });
+      return clientes;
     } catch (err) {}
   }
 

@@ -1,3 +1,4 @@
+import { Expose } from 'class-transformer';
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateClienteDto {
@@ -16,4 +17,9 @@ export class CreateClienteDto {
   @IsString()
   @IsNotEmpty()
   sobrenome: string;
+
+  @Expose()
+  get nomeCompleto(): string {
+    return this.nome ?? this.sobrenome;
+  }
 }

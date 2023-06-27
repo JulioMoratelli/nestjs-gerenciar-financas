@@ -5,6 +5,7 @@ import { ClientesRepository } from './repositories/clientes.repository';
 import { cpf } from 'cpf-cnpj-validator';
 import { Decimal } from '@prisma/client/runtime';
 import { ContaRepository } from 'src/contas/repositories/conta.repository';
+import { ClientesEntity } from './entities/cliente.entity';
 
 @Injectable()
 export class ClientesService {
@@ -36,21 +37,12 @@ export class ClientesService {
   }
 
   async findOne(id: number) {
-    const cliente = await this.repository.findOne(id);
-    if (cliente) {
-      const nomeCompleto = `${cliente.nome} ${cliente.sobrenome}`;
-      return { ...cliente, nomeCompleto };
-    }
-    return null;
+    return await this.repository.findOne(id);
   }
 
-  async findAllClienteEndereco(id: number) {
+  async findAllClienteEndereco(id: number): Promise<ClientesEntity[]> {
     await this.atualizarSaldoCliente(id);
-    const cliente = await this.repository.findOne(id);
-    if (cliente) {
-      const nomeCompleto = `${cliente.nome} ${cliente.sobrenome}`;
-      return { ...cliente, nomeCompleto };
-    }
+    await this.repository.findOne(id);
     return this.repository.findAllComEndereco();
   }
 
