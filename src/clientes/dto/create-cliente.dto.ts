@@ -20,6 +20,6 @@ export class CreateClienteDto {
 
   @Expose()
   get nomeCompleto(): string {
-    return this.nome ?? this.sobrenome;
+    return this.nome + ' ' + this.sobrenome;
   }
 }

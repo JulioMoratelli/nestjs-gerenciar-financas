@@ -6,12 +6,14 @@ import {
   Patch,
   Param,
   Delete,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ClientesService } from './clientes.service';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ClientesEntity } from './entities/cliente.entity';
+import { Expose } from 'class-transformer';
 
 @Controller('clientes')
 export class ClientesController {
@@ -31,6 +33,7 @@ export class ClientesController {
   }
 
   @Get(':id')
+  @UseInterceptors(Expose)
   async findOne(@Param('id') id: number): Promise<ClientesEntity> {
     try {
       return await this.prisma.$transaction(async () => {
