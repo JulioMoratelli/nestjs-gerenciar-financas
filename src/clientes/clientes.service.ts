@@ -18,12 +18,14 @@ export class ClientesService {
     const contas = await this.contasRepository.findAll(clienteId);
 
     console.log(contas);
-    const saldoAtual = contas.reduce((acumulado, conta) => {
-      const valorConta = new Decimal(conta.saldo);
-      return new Decimal(acumulado).add(valorConta);
-    }, new Decimal(0));
+    let saldoAtual = new Decimal(0);
 
-    await this.repository.updateSaldo(clienteId, saldoAtual);
+    for (let i = 0; i < contas.length; i++) {
+      const valorConta = new Decimal(contas[i].saldo);
+      saldoAtual = saldoAtual.plus(valorConta);
+    }
+
+    await this.repository.updateSaldoCliente(clienteId, saldoAtual);
   }
 
   create(createClienteDto: CreateClienteDto) {
@@ -37,6 +39,7 @@ export class ClientesService {
   }
 
   async findOne(id: number) {
+    await this.atualizarSaldoCliente(id);
     return await this.repository.findOne(id);
   }
 

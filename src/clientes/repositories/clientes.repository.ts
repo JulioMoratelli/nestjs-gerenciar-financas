@@ -90,7 +90,10 @@ export class ClientesRepository {
     } catch (err) {}
   }
 
-  async updateSaldo(id: number, saldoAtual: Decimal): Promise<ClientesEntity> {
+  async updateSaldoCliente(
+    id: number,
+    saldoAtual: Decimal,
+  ): Promise<ClientesEntity> {
     try {
       const cliente = this.prisma.cliente.update({
         where: {
