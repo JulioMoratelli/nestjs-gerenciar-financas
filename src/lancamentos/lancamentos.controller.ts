@@ -26,7 +26,7 @@ export class LancamentosController {
   }
 
   @Get(':id')
-  findOne(@Param('clienteId') clienteId: number, @Param('id') id: string) {
+  findOne(@Param('clienteId') clienteId: number, @Param('id') id: number) {
     return this.lancamentosService.findOne(+id, clienteId);
   }
 

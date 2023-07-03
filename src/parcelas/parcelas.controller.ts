@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { ParcelasService } from './parcelas.service';
 import { CreateParcelaDto } from './dto/create-parcela.dto';
 import { UpdateParcelaDto } from './dto/update-parcela.dto';
@@ -13,22 +21,40 @@ export class ParcelasController {
   }
 
   @Get()
-  findAll() {
-    return this.parcelasService.findAll();
+  findAll(clienteId: number, lancamentoId: number) {
+    return this.parcelasService.findAll(clienteId, lancamentoId);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.parcelasService.findOne(+id);
+  findOne(
+    @Param('clienteId') clienteId: number,
+    @Param('lancamentoId') lancamentoId: number,
+    @Param('id') id: number,
+  ) {
+    return this.parcelasService.findOne(clienteId, lancamentoId, +id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateParcelaDto: UpdateParcelaDto) {
-    return this.parcelasService.update(+id, updateParcelaDto);
+  update(
+    @Param('clienteId') clienteId: number,
+    @Param('lancamentoId') lancamentoId: number,
+    @Param('id') id: string,
+    @Body() updateParcelaDto: UpdateParcelaDto,
+  ) {
+    return this.parcelasService.update(
+      clienteId,
+      lancamentoId,
+      +id,
+      updateParcelaDto,
+    );
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.parcelasService.remove(+id);
+  remove(
+    @Param('clienteId') clienteId: number,
+    @Param('lancamentoId') lancamentoId: number,
+    @Param('id') id: string,
+  ) {
+    return this.parcelasService.remove(clienteId, lancamentoId, +id);
   }
 }

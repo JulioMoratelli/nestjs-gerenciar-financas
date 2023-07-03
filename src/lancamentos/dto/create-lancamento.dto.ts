@@ -1,5 +1,11 @@
 import { Decimal } from '@prisma/client/runtime';
-import { IsDecimal, IsInt, IsNotEmpty, IsString } from 'class-validator';
+import {
+  IsDecimal,
+  IsInt,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+} from 'class-validator';
 
 export class CreateLancamentoDto {
   @IsDecimal()
@@ -18,7 +24,7 @@ export class CreateLancamentoDto {
   @IsNotEmpty()
   descricao: string;
 
-  @IsString()
+  @IsNumber()
   @IsNotEmpty()
   clienteId: number;
 }

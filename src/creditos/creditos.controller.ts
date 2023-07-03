@@ -10,37 +10,67 @@ import {
 import { CreditosService } from './creditos.service';
 import { CreateCreditoDto } from './dto/create-credito.dto';
 import { UpdateCreditoDto } from './dto/update-credito.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Controller('creditos')
 export class CreditosController {
-  constructor(private readonly creditosService: CreditosService) {}
+  constructor(
+    private readonly creditosService: CreditosService,
+    public prisma: PrismaService,
+  ) {}
 
   @Post()
-  create(@Body() createCreditoDto: CreateCreditoDto) {
-    return this.creditosService.create(createCreditoDto);
+  async create(@Body() createCreditoDto: CreateCreditoDto) {
+    try {
+      return await this.prisma.$transaction(async () => {
+        return this.creditosService.create(createCreditoDto);
+      });
+    } catch (err) {}
   }
 
   @Get()
-  findAll(@Param('id') id: number, @Param('clienteId') clienteId: number) {
-    return this.creditosService.findAll(clienteId, id);
+  async findAll(
+    @Param('id') id: number,
+    @Param('clienteId') clienteId: number,
+  ) {
+    try {
+      return await this.prisma.$transaction(async () => {
+        return this.creditosService.findAll(clienteId, id);
+      });
+    } catch (err) {}
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string, @Param('clienteId') clienteId: number) {
-    return this.creditosService.findOne(+id, clienteId);
+  async findOne(
+    @Param('id') id: string,
+    @Param('clienteId') clienteId: number,
+  ) {
+    try {
+      return await this.prisma.$transaction(async () => {
+        return this.creditosService.findOne(+id, clienteId);
+      });
+    } catch (err) {}
   }
 
   @Patch(':id')
-  update(
+  async update(
     @Param('id') id: string,
     @Param('clienteId') clienteId: number,
     @Body() updateCreditoDto: UpdateCreditoDto,
   ) {
-    return this.creditosService.update(+id, clienteId, updateCreditoDto);
+    try {
+      return await this.prisma.$transaction(async () => {
+        return this.creditosService.update(+id, clienteId, updateCreditoDto);
+      });
+    } catch (err) {}
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string, @Param('clienteId') clienteId: number) {
-    return this.creditosService.remove(+id, clienteId);
+  async remove(@Param('id') id: string, @Param('clienteId') clienteId: number) {
+    try {
+      return await this.prisma.$transaction(async () => {
+        return this.creditosService.remove(+id, clienteId);
+      });
+    } catch (err) {}
   }
 }

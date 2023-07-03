@@ -14,33 +14,64 @@ export class ParcelasRepository {
     });
   }
 
-  async findAll(): Promise<ParcelaEntity[]> {
-    return await this.prisma.parcela.findMany();
+  async createMany(createParcelaDto: CreateParcelaDto[]) {
+    return this.prisma.parcela.createMany({
+      data: createParcelaDto,
+      skipDuplicates: true,
+    });
   }
 
-  findOne(id: number): Promise<ParcelaEntity> {
+  async findAll(
+    clienteId: number,
+    lancamentoId: number,
+  ): Promise<ParcelaEntity[]> {
+    return await this.prisma.parcela.findMany({
+      where: {
+        clienteId,
+        lancamentoId,
+      },
+    });
+  }
+
+  findOne(
+    clienteId: number,
+    lancamentoId: number,
+    id: number,
+  ): Promise<ParcelaEntity> {
     return this.prisma.parcela.findUnique({
       where: {
+        clienteId,
+        lancamentoId,
         id,
       },
     });
   }
 
   update(
+    clienteId: number,
+    lancamentoId: number,
     id: number,
     updateParcelaDto: UpdateParcelaDto,
   ): Promise<ParcelaEntity> {
     return this.prisma.parcela.update({
       where: {
+        clienteId,
+        lancamentoId,
         id,
       },
       data: updateParcelaDto,
     });
   }
 
-  remove(id: number): Promise<ParcelaEntity> {
+  remove(
+    clienteId: number,
+    lancamentoId: number,
+    id: number,
+  ): Promise<ParcelaEntity> {
     return this.prisma.parcela.delete({
       where: {
+        clienteId,
+        lancamentoId,
         id,
       },
     });
