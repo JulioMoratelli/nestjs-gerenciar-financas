@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateClienteDto } from '../dto/create-cliente.dto';
 import { UpdateClienteDto } from '../dto/update-cliente.dto';
 import { ClientesEntity } from '../entities/cliente.entity';
 import { cnpj, cpf } from 'cpf-cnpj-validator';
 import { Decimal } from '@prisma/client/runtime';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class ClientesRepository {

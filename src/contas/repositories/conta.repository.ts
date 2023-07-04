@@ -5,10 +5,6 @@ import { UpdateContaDto } from '../dto/update-conta.dto';
 import { ContaEntity } from '../entities/conta.entity';
 import { Decimal } from '@prisma/client/runtime';
 
-export interface ContaExtendedEntity extends ContaEntity {
-  saldo: Decimal;
-}
-
 @Injectable()
 export class ContaRepository {
   saldo: Decimal;

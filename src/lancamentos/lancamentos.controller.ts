@@ -10,14 +10,25 @@ import {
 import { LancamentosService } from './lancamentos.service';
 import { CreateLancamentoDto } from './dto/create-lancamento.dto';
 import { UpdateLancamentoDto } from './dto/update-lancamento.dto';
+import { CreateParcelaDto } from 'src/parcelas/dto/create-parcela.dto';
+import { ParcelasRepository } from 'src/parcelas/repositories/parcelas.repository';
 
 @Controller('lancamentos')
 export class LancamentosController {
-  constructor(private readonly lancamentosService: LancamentosService) {}
+  constructor(
+    private readonly lancamentosService: LancamentosService,
+    private parcelasRepository: ParcelasRepository,
+  ) {}
 
   @Post()
-  create(@Body() createLancamentoDto: CreateLancamentoDto) {
-    return this.lancamentosService.create(createLancamentoDto);
+  create(
+    @Body() createLancamentoDto: CreateLancamentoDto,
+    @Body() createParcelaDto: CreateParcelaDto,
+  ) {
+    return this.lancamentosService.create(
+      createLancamentoDto,
+      createParcelaDto,
+    );
   }
 
   @Get()

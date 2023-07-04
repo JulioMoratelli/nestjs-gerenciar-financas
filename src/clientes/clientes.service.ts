@@ -24,7 +24,6 @@ export class ClientesService {
       const valorConta = new Decimal(contas[i].saldo);
       saldoAtual = saldoAtual.plus(valorConta);
     }
-
     await this.repository.updateSaldoCliente(clienteId, saldoAtual);
   }
 
