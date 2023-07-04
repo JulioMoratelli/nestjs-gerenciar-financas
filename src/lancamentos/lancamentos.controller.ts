@@ -1,3 +1,4 @@
+import { PrismaService } from 'src/prisma/prisma.service';
 import {
   Controller,
   Get,
@@ -10,48 +11,67 @@ import {
 import { LancamentosService } from './lancamentos.service';
 import { CreateLancamentoDto } from './dto/create-lancamento.dto';
 import { UpdateLancamentoDto } from './dto/update-lancamento.dto';
-import { CreateParcelaDto } from 'src/parcelas/dto/create-parcela.dto';
-import { ParcelasRepository } from 'src/parcelas/repositories/parcelas.repository';
 
 @Controller('lancamentos')
 export class LancamentosController {
   constructor(
     private readonly lancamentosService: LancamentosService,
-    private parcelasRepository: ParcelasRepository,
+    private prisma: PrismaService,
   ) {}
 
   @Post()
-  create(
-    @Body() createLancamentoDto: CreateLancamentoDto,
-    @Body() createParcelaDto: CreateParcelaDto,
-  ) {
-    return this.lancamentosService.create(
-      createLancamentoDto,
-      createParcelaDto,
-    );
+  async create(@Body() createLancamentoDto: CreateLancamentoDto) {
+    try {
+      return await this.prisma.$transaction(async () => {
+        return this.lancamentosService.create(createLancamentoDto);
+      });
+    } catch (err) {}
   }
 
-  @Get()
-  findAll(@Param('clienteId') clienteId: number) {
-    return this.lancamentosService.findAll(clienteId);
+  @Get(':clienteId')
+  async findAll(@Param('clienteId') clienteId: number) {
+    try {
+      return await this.prisma.$transaction(async () => {
+        return this.lancamentosService.findAll(clienteId);
+      });
+    } catch (err) {}
   }
 
   @Get(':id')
-  findOne(@Param('clienteId') clienteId: number, @Param('id') id: number) {
-    return this.lancamentosService.findOne(+id, clienteId);
+  async findOne(
+    @Param('clienteId') clienteId: number,
+    @Param('id') id: number,
+  ) {
+    try {
+      return await this.prisma.$transaction(async () => {
+        return this.lancamentosService.findOne(+id, clienteId);
+      });
+    } catch (err) {}
   }
 
   @Patch(':id')
-  update(
+  async update(
     @Param('clienteId') clienteId: number,
     @Param('id') id: string,
     @Body() updateLancamentoDto: UpdateLancamentoDto,
   ) {
-    return this.lancamentosService.update(clienteId, +id, updateLancamentoDto);
+    try {
+      return await this.prisma.$transaction(async () => {
+        return this.lancamentosService.update(
+          clienteId,
+          +id,
+          updateLancamentoDto,
+        );
+      });
+    } catch (err) {}
   }
 
   @Delete(':id')
-  remove(@Param('clienteId') clienteId: number, @Param('id') id: string) {
-    return this.lancamentosService.remove(+id, clienteId);
+  async remove(@Param('clienteId') clienteId: number, @Param('id') id: string) {
+    try {
+      return await this.prisma.$transaction(async () => {
+        return this.lancamentosService.remove(+id, clienteId);
+      });
+    } catch (err) {}
   }
 }

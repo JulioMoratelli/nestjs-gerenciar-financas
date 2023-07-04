@@ -24,7 +24,7 @@ export class LancamentosRepository {
     });
   }
 
-  findOne(clienteId: number, id: number) {
+  findOne(clienteId: number, id: number): Promise<LancamentoEntity> {
     return this.prisma.lancamento.findUnique({
       where: {
         clienteId,
