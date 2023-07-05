@@ -20,7 +20,7 @@ export class ParcelasController {
     return this.parcelasService.create(createParcelaDto);
   }
 
-  @Get()
+  @Get(':clienteId')
   findAll(clienteId: number, lancamentoId: number) {
     return this.parcelasService.findAll(clienteId, lancamentoId);
   }
@@ -50,11 +50,7 @@ export class ParcelasController {
   }
 
   @Delete(':id')
-  remove(
-    @Param('clienteId') clienteId: number,
-    @Param('lancamentoId') lancamentoId: number,
-    @Param('id') id: string,
-  ) {
-    return this.parcelasService.remove(clienteId, lancamentoId, +id);
+  remove() {
+    return this.parcelasService.remove();
   }
 }
