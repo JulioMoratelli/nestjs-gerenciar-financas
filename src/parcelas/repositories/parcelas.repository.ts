@@ -14,21 +14,10 @@ export class ParcelasRepository {
     });
   }
 
-  async createMany(createParcelaDto: CreateParcelaDto[]) {
-    return this.prisma.parcela.createMany({
-      data: createParcelaDto,
-      skipDuplicates: true,
-    });
-  }
-
-  async findAll(
-    clienteId: number,
-    lancamentoId: number,
-  ): Promise<ParcelaEntity[]> {
+  async findAll(clienteId: number): Promise<ParcelaEntity[]> {
     return await this.prisma.parcela.findMany({
       where: {
         clienteId,
-        lancamentoId,
       },
     });
   }

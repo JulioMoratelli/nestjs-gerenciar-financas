@@ -1,28 +1,14 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Get, Body, Patch, Param, Delete } from '@nestjs/common';
 import { ParcelasService } from './parcelas.service';
-import { CreateParcelaDto } from './dto/create-parcela.dto';
 import { UpdateParcelaDto } from './dto/update-parcela.dto';
 
 @Controller('parcelas')
 export class ParcelasController {
   constructor(private readonly parcelasService: ParcelasService) {}
 
-  @Post()
-  create(@Body() createParcelaDto: CreateParcelaDto) {
-    return this.parcelasService.create(createParcelaDto);
-  }
-
   @Get(':clienteId')
-  findAll(clienteId: number, lancamentoId: number) {
-    return this.parcelasService.findAll(clienteId, lancamentoId);
+  findAll(clienteId: number) {
+    return this.parcelasService.findAll(clienteId);
   }
 
   @Get(':id')

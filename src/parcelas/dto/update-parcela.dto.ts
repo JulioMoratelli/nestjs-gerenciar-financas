@@ -4,6 +4,7 @@ import {
   IsDecimal,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
 } from 'class-validator';
 import { Decimal } from '@prisma/client/runtime';
 
@@ -23,4 +24,8 @@ export class UpdateParcelaDto {
   @IsBoolean()
   @IsNotEmpty()
   pago: boolean;
+
+  @IsNumber()
+  @IsOptional()
+  contaId: number;
 }
