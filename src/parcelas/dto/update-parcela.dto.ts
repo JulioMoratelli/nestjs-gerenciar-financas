@@ -9,10 +9,6 @@ import {
 import { Decimal } from '@prisma/client/runtime';
 
 export class UpdateParcelaDto {
-  @IsNumber()
-  @IsNotEmpty()
-  numeroParcela: number;
-
   @IsDate()
   @IsNotEmpty()
   vencimento: Date;

@@ -12,15 +12,11 @@ export class ParcelasController {
   }
 
   @Get(':id')
-  findOne(
-    @Param('clienteId') clienteId: number,
-    @Param('lancamentoId') lancamentoId: number,
-    @Param('id') id: number,
-  ) {
-    return this.parcelasService.findOne(clienteId, lancamentoId, +id);
+  findOne(@Param('clienteId') clienteId: number, @Param('id') id: number) {
+    return this.parcelasService.findOne(clienteId, id);
   }
 
-  @Patch(':id')
+  @Patch(':clienteId/:lancamentoId/:id')
   update(
     @Param('clienteId') clienteId: number,
     @Param('lancamentoId') lancamentoId: number,

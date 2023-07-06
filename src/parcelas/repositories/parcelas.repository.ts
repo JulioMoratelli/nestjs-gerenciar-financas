@@ -14,23 +14,26 @@ export class ParcelasRepository {
     });
   }
 
-  async findAll(clienteId: number): Promise<ParcelaEntity[]> {
+  async findAll(
+    clienteId: number,
+    periodo?: { deData: Date; ateData: Date },
+    status?: boolean,
+  ): Promise<ParcelaEntity[]> {
     return await this.prisma.parcela.findMany({
       where: {
         clienteId,
+        ...(status !== undefined && { pago: status }),
+        ...(periodo !== undefined && {
+          vencimento: { gte: periodo.deData, lte: periodo.ateData },
+        }),
       },
     });
   }
 
-  findOne(
-    clienteId: number,
-    lancamentoId: number,
-    id: number,
-  ): Promise<ParcelaEntity> {
+  findOne(clienteId: number, id: number): Promise<ParcelaEntity> {
     return this.prisma.parcela.findUnique({
       where: {
         clienteId,
-        lancamentoId,
         id,
       },
     });

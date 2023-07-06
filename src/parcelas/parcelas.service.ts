@@ -6,7 +6,6 @@ import { ParcelasRepository } from './repositories/parcelas.repository';
 import { Decimal } from '@prisma/client/runtime';
 import { addDays } from 'date-fns';
 import { ContaEntity } from 'src/contas/entities/conta.entity';
-import { error } from 'console';
 
 @Injectable()
 export class ParcelasService {
@@ -40,20 +39,30 @@ export class ParcelasService {
     }
   }
 
-  async findAll(clienteId: number) {
-    return this.repository.findAll(clienteId);
+  async findAll(
+    clienteId: number,
+    periodo?: { deData: Date; ateData: Date },
+    status?: boolean,
+  ) {
+    return this.repository.findAll(clienteId, periodo, status);
   }
 
-  findOne(clienteId: number, lancamentoId: number, id: number) {
-    return this.repository.findOne(clienteId, lancamentoId, id);
+  async findOne(clienteId: number, id: number) {
+    return this.repository.findOne(clienteId, id);
   }
 
-  update(
+  async update(
     clienteId: number,
     lancamentoId: number,
     id: number,
     updateParcelaDto: UpdateParcelaDto,
   ) {
+    const parcela = await this.repository.findOne(clienteId, id);
+
+    if (parcela.pago) {
+      throw new Error('não é possivel alterar uma parcela paga');
+    }
+
     delete updateParcelaDto.valor;
     return this.repository.update(
       clienteId,
@@ -63,44 +72,45 @@ export class ParcelasService {
     );
   }
 
-  remove() {
+  async remove() {
     throw new Error('A parcela não pode ser excluida');
   }
 
-  async IdentificandoPagamento(
-    clienteId: number,
-    lancamentoId: number,
-    id: number,
-    contaId: number,
-  ): Promise<void> {
-    const parcela = await this.repository.findOne(clienteId, lancamentoId, id);
-    contaId = this.contaEntity.id;
-    const valorParcela = parcela.valor;
-    const conta = await this.contaRepository.findOne(clienteId, clienteId);
-    const novoSaldo = Number(conta.saldo) - Number(valorParcela);
-
-    if (parcela.pago == true) {
-      throw new Error('parcela ja foi pago');
-    }
+  async pagarParcela(clienteId: number, id: number, contaId: number) {
+    const parcela = await this.repository.findOne(clienteId, id);
     if (!parcela) {
-      throw new Error('parcela não existe');
+      throw new Error('Parcela não existe');
     }
+    if (parcela.pago) {
+      throw new Error('Parcela já foi paga');
+    }
+    console.log(parcela);
 
+    const conta = await this.contaRepository.findOne(clienteId, contaId);
     if (!conta) {
-      throw new error('Essa conta não existe');
+      throw new Error('Conta não existe');
     }
+    console.log(conta);
+
+    const novoSaldo = Number(conta.saldo) - Number(parcela.valor);
+    console.log(novoSaldo);
 
     await this.contaRepository.updateSaldoConta(
       contaId,
       new Decimal(novoSaldo),
     );
 
-    await this.repository.update(clienteId, lancamentoId, id, {
+    await this.repository.update(parcela.clienteId, parcela.lancamentoId, id, {
       pago: true,
       contaId,
-      numeroParcela: parcela.numeroParcela,
       vencimento: parcela.vencimento,
       valor: new Decimal(novoSaldo),
     });
   }
+
+  // async identificarReversao(clienteId: number, id: number) {
+  //   const parcela = await this.repository.findOne(clienteId, id);
+  //   const conta = await this.contaRepository.findOne(contaId);
+  //   const novoSaldo = Number(conta.saldo);
+  // }
 }
