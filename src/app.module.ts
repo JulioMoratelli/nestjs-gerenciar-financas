@@ -8,6 +8,7 @@ import { CreditosModule } from './creditos/creditos.module';
 import { PrismaService } from './prisma/prisma.service';
 import { LancamentosModule } from './lancamentos/lancamentos.module';
 import { ParcelasModule } from './parcelas/parcelas.module';
+import { IsCpfCnpjConstraint } from 'decoradores/cpfcnpj.decorador';
 
 @Module({
   imports: [
@@ -19,6 +20,6 @@ import { ParcelasModule } from './parcelas/parcelas.module';
     ParcelasModule,
   ],
   controllers: [AppController],
-  providers: [AppService, PrismaService],
+  providers: [AppService, PrismaService, IsCpfCnpjConstraint],
 })
 export class AppModule {}

@@ -2,7 +2,7 @@ import { ContaRepository } from './../contas/repositories/conta.repository';
 import { Injectable } from '@nestjs/common';
 import { CreateParcelaDto } from './dto/create-parcela.dto';
 import { UpdateParcelaDto } from './dto/update-parcela.dto';
-import { ParcelasRepository } from './repositories/parcelas.repository';
+import { ParcelasRepository } from './parcelas.repository';
 import { Decimal } from '@prisma/client/runtime';
 import { addDays } from 'date-fns';
 
@@ -106,13 +106,6 @@ export class ParcelasService {
       contaId,
       new Decimal(novoSaldo),
     );
-
-    await this.repository.update(parcela.clienteId, parcela.lancamentoId, id, {
-      pago: true,
-      contaId,
-      vencimento: parcela.vencimento,
-      valor: new Decimal(novoSaldo),
-    });
   }
 
   async identificarReversao(clienteId: number, id: number) {
@@ -135,12 +128,5 @@ export class ParcelasService {
       parcela.clienteId,
       new Decimal(novoSaldo),
     );
-
-    await this.repository.update(parcela.clienteId, parcela.lancamentoId, id, {
-      pago: true,
-      contaId: parcela.contaId,
-      vencimento: parcela.vencimento,
-      valor: new Decimal(novoSaldo),
-    });
   }
 }

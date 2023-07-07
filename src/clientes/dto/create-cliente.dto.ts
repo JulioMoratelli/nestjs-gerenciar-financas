@@ -1,5 +1,6 @@
 import { Expose } from 'class-transformer';
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { IsCpfCnpj } from 'decoradores/cpfcnpj.decorador';
 
 export class CreateClienteDto {
   @IsEmail()
@@ -8,6 +9,7 @@ export class CreateClienteDto {
 
   @IsString()
   @IsNotEmpty()
+  @IsCpfCnpj('cpf')
   cpf: string;
 
   @IsString()

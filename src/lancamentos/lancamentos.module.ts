@@ -3,7 +3,7 @@ import { LancamentosService } from './lancamentos.service';
 import { LancamentosController } from './lancamentos.controller';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { LancamentosRepository } from './repositories/lancamentos.repository';
-import { ParcelasRepository } from 'src/parcelas/repositories/parcelas.repository';
+import { ParcelasRepository } from 'src/parcelas/parcelas.repository';
 import { ParcelasService } from 'src/parcelas/parcelas.service';
 import { ContaEntity } from 'src/contas/entities/conta.entity';
 import { ContaRepository } from 'src/contas/repositories/conta.repository';

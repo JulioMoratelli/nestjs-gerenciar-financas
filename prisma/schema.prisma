@@ -19,6 +19,8 @@ model Cliente{
   cpf       String @unique 
   nome      String
   sobrenome String
+  dataCriado DateTime @default(now())
+  dataAlterado DateTime @default(now())
   saldo     Decimal @default(0)
   enderecos Endereco[]
   contas    Conta[]
@@ -39,6 +41,8 @@ model Endereco{
   complemento String?
   cidade      String
   cep         Int
+  dataCriado DateTime @default(now())
+  dataAlterado DateTime @default(now())
  
   cliente     Cliente @relation(fields: [clienteId], references: [id])
   @@map("enderecos")
@@ -49,6 +53,8 @@ model Conta{
   clienteId   Int 
   nome        String @unique
   saldo       Decimal @default(0)
+  dataCriado  DateTime @default(now())
+  dataAlterado DateTime @default(now())
   credito     Credito []
   parcela     Parcela[]
 
@@ -62,6 +68,7 @@ model Credito{
   clienteId   Int
   contaId     Int
   valor       Decimal
+  dataCriado DateTime @default(now())
 
   cliente     Cliente @relation(fields: [clienteId], references: [id])
   conta       Conta   @relation(fields: [contaId], references: [id])
@@ -75,6 +82,8 @@ model Lancamento{
   valorTotal  Decimal
   numeroParcelas Int
   status      String
+  dataCriado  DateTime @default(now())
+  dataAlterado DateTime @default(now())
   parcela    Parcela[]
 
   cliente     Cliente @relation(fields: [clienteId], references: [id])
@@ -89,6 +98,8 @@ model Parcela{
   numeroParcela Int
   vencimento  DateTime
   valor       Decimal
+  dataCriado  DateTime @default(now())
+  dataAlterado DateTime @default(now())
   pago        Boolean @default(false)
 
   cliente     Cliente @relation(fields: [clienteId], references: [id])

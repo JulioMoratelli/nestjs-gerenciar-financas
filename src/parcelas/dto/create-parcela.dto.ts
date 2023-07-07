@@ -1,5 +1,11 @@
 import { Decimal } from '@prisma/client/runtime';
-import { IsBoolean, IsDecimal, IsNotEmpty, IsNumber } from 'class-validator';
+import {
+  IsBoolean,
+  IsDateString,
+  IsDecimal,
+  IsNotEmpty,
+  IsNumber,
+} from 'class-validator';
 
 export class CreateParcelaDto {
   @IsNumber()
@@ -18,6 +24,7 @@ export class CreateParcelaDto {
   @IsNotEmpty()
   numeroParcela: number;
 
+  @IsDateString()
   @IsNotEmpty()
   vencimento: Date;
 

@@ -1,10 +1,14 @@
 import { Controller, Get, Body, Patch, Param, Delete } from '@nestjs/common';
 import { ParcelasService } from './parcelas.service';
 import { UpdateParcelaDto } from './dto/update-parcela.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Controller('parcelas')
 export class ParcelasController {
-  constructor(private readonly parcelasService: ParcelasService) {}
+  constructor(
+    private readonly parcelasService: ParcelasService,
+    private prisma: PrismaService,
+  ) {}
 
   @Get(':clienteId')
   findAll(clienteId: number) {
@@ -17,22 +21,30 @@ export class ParcelasController {
   }
 
   @Patch(':clienteId/:lancamentoId/:id')
-  update(
+  async update(
     @Param('clienteId') clienteId: number,
     @Param('lancamentoId') lancamentoId: number,
     @Param('id') id: string,
     @Body() updateParcelaDto: UpdateParcelaDto,
   ) {
-    return this.parcelasService.update(
-      clienteId,
-      lancamentoId,
-      +id,
-      updateParcelaDto,
-    );
+    try {
+      return await this.prisma.$transaction(async () => {
+        return this.parcelasService.update(
+          clienteId,
+          lancamentoId,
+          +id,
+          updateParcelaDto,
+        );
+      });
+    } catch (err) {}
   }
 
   @Delete(':id')
-  remove() {
-    return this.parcelasService.remove();
+  async remove() {
+    try {
+      return await this.prisma.$transaction(async () => {
+        return this.parcelasService.remove();
+      });
+    } catch (err) {}
   }
 }
