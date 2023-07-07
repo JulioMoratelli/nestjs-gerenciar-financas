@@ -5,13 +5,11 @@ import { UpdateParcelaDto } from './dto/update-parcela.dto';
 import { ParcelasRepository } from './repositories/parcelas.repository';
 import { Decimal } from '@prisma/client/runtime';
 import { addDays } from 'date-fns';
-import { ContaEntity } from 'src/contas/entities/conta.entity';
 
 @Injectable()
 export class ParcelasService {
   constructor(
     private readonly repository: ParcelasRepository,
-    private contaEntity: ContaEntity,
     private contaRepository: ContaRepository,
   ) {}
 
@@ -64,36 +62,45 @@ export class ParcelasService {
     }
 
     delete updateParcelaDto.valor;
-    return this.repository.update(
+    const atualizarParcela = this.repository.update(
       clienteId,
       lancamentoId,
       id,
       updateParcelaDto,
     );
+
+    if (updateParcelaDto.pago === true) {
+      await this.IdentificandoPagamento(
+        clienteId,
+        id,
+        updateParcelaDto.contaId,
+      );
+    } else if (updateParcelaDto.pago === false) {
+      await this.identificarReversao(clienteId, id);
+    }
+
+    return atualizarParcela;
   }
 
   async remove() {
     throw new Error('A parcela não pode ser excluida');
   }
 
-  async pagarParcela(clienteId: number, id: number, contaId: number) {
+  async IdentificandoPagamento(clienteId: number, id: number, contaId: number) {
     const parcela = await this.repository.findOne(clienteId, id);
+    const conta = await this.contaRepository.findOne(clienteId, contaId);
+    const novoSaldo = Number(conta.saldo) - Number(parcela.valor);
+    console.log(parcela);
+    console.log(conta);
+    console.log(novoSaldo);
+
     if (!parcela) {
       throw new Error('Parcela não existe');
-    }
-    if (parcela.pago) {
+    } else if (parcela.pago) {
       throw new Error('Parcela já foi paga');
-    }
-    console.log(parcela);
-
-    const conta = await this.contaRepository.findOne(clienteId, contaId);
-    if (!conta) {
+    } else if (!conta) {
       throw new Error('Conta não existe');
     }
-    console.log(conta);
-
-    const novoSaldo = Number(conta.saldo) - Number(parcela.valor);
-    console.log(novoSaldo);
 
     await this.contaRepository.updateSaldoConta(
       contaId,
@@ -108,9 +115,32 @@ export class ParcelasService {
     });
   }
 
-  // async identificarReversao(clienteId: number, id: number) {
-  //   const parcela = await this.repository.findOne(clienteId, id);
-  //   const conta = await this.contaRepository.findOne(contaId);
-  //   const novoSaldo = Number(conta.saldo);
-  // }
+  async identificarReversao(clienteId: number, id: number) {
+    const parcela = await this.repository.findOne(clienteId, id);
+    const conta = await this.contaRepository.findOne(
+      clienteId,
+      parcela.contaId,
+    );
+    const novoSaldo = Number(conta.saldo) + Number(parcela.valor);
+
+    if (!parcela.pago) {
+      throw new Error('essa parcela não esta paga');
+    } else if (!parcela.contaId) {
+      throw new Error('parcela não possui uma conta associada');
+    } else if (!conta) {
+      throw new Error('conta não existe');
+    }
+
+    await this.contaRepository.updateSaldoConta(
+      parcela.clienteId,
+      new Decimal(novoSaldo),
+    );
+
+    await this.repository.update(parcela.clienteId, parcela.lancamentoId, id, {
+      pago: true,
+      contaId: parcela.contaId,
+      vencimento: parcela.vencimento,
+      valor: new Decimal(novoSaldo),
+    });
+  }
 }

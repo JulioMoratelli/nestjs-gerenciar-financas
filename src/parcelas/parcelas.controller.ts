@@ -11,7 +11,7 @@ export class ParcelasController {
     return this.parcelasService.findAll(clienteId);
   }
 
-  @Get(':id')
+  @Get(':clienteId/:id')
   findOne(@Param('clienteId') clienteId: number, @Param('id') id: number) {
     return this.parcelasService.findOne(clienteId, id);
   }

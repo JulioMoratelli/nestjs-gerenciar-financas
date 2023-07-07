@@ -10,14 +10,20 @@ import {
 import { ContasService } from './contas.service';
 import { CreateContaDto } from './dto/create-conta.dto';
 import { UpdateContaDto } from './dto/update-conta.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Controller('contas')
 export class ContasController {
-  constructor(private readonly contasService: ContasService) {}
+  constructor(
+    private readonly contasService: ContasService,
+    private prisma: PrismaService,
+  ) {}
 
   @Post()
-  create(@Body() createContaDto: CreateContaDto) {
-    return this.contasService.create(createContaDto);
+  async create(@Body() createContaDto: CreateContaDto) {
+    return await this.prisma.$transaction(async () => {
+      return this.contasService.create(createContaDto);
+    });
   }
 
   @Get(':clienteId')
@@ -31,16 +37,20 @@ export class ContasController {
   }
 
   @Patch(':id')
-  update(
+  async update(
     @Param('clienteId') clienteId: number,
     @Param('id') id: string,
     @Body() updateContaDto: UpdateContaDto,
   ) {
-    return this.contasService.update(clienteId, +id, updateContaDto);
+    return await this.prisma.$transaction(async () => {
+      return this.contasService.update(clienteId, +id, updateContaDto);
+    });
   }
 
   @Delete(':id')
-  remove(@Param('clienteId') clienteId: number, @Param('id') id: string) {
-    return this.contasService.remove(clienteId, +id);
+  async remove(@Param('clienteId') clienteId: number, @Param('id') id: string) {
+    return await this.prisma.$transaction(async () => {
+      return this.contasService.remove(clienteId, +id);
+    });
   }
 }

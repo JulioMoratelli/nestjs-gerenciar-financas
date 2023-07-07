@@ -11,14 +11,22 @@ import { EnderecosService } from './enderecos.service';
 import { CreateEnderecoDto } from './dto/create-endereco.dto';
 import { UpdateEnderecoDto } from './dto/update-endereco.dto';
 import { EnderecoEntity } from './entities/endereco.entity';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Controller('enderecos')
 export class EnderecosController {
-  constructor(private readonly enderecosService: EnderecosService) {}
+  constructor(
+    private readonly enderecosService: EnderecosService,
+    private prisma: PrismaService,
+  ) {}
 
   @Post()
-  create(@Body() createEnderecoDto: CreateEnderecoDto) {
-    return this.enderecosService.create(createEnderecoDto);
+  async create(@Body() createEnderecoDto: CreateEnderecoDto) {
+    try {
+      return await this.prisma.$transaction(async () => {
+        return this.enderecosService.create(createEnderecoDto);
+      });
+    } catch (err) {}
   }
 
   @Get()
@@ -35,15 +43,23 @@ export class EnderecosController {
   }
 
   @Patch(':id')
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateEnderecoDto: UpdateEnderecoDto,
   ) {
-    return this.enderecosService.update(+id, updateEnderecoDto);
+    try {
+      return await this.prisma.$transaction(async () => {
+        return this.enderecosService.update(+id, updateEnderecoDto);
+      });
+    } catch (err) {}
   }
 
   @Delete(':id')
-  remove(@Param('clienteId') clienteId: number, @Param('id') id: string) {
-    return this.enderecosService.remove(clienteId, +id);
+  async remove(@Param('clienteId') clienteId: number, @Param('id') id: string) {
+    try {
+      return await this.prisma.$transaction(async () => {
+        return this.enderecosService.remove(clienteId, +id);
+      });
+    } catch (err) {}
   }
 }

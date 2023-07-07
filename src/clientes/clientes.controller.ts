@@ -36,20 +36,14 @@ export class ClientesController {
   @UseInterceptors(Expose)
   async findOne(@Param('id') id: number): Promise<ClientesEntity> {
     try {
-      return await this.prisma.$transaction(async () => {
-        const get = this.clientesService.findOne(+id);
-        return get;
-      });
+      return this.clientesService.findOne(+id);
     } catch (err) {}
   }
 
   @Get('enderecos/:id')
   async findAllClienteEndereco(@Param('id') id: number) {
     try {
-      return await this.prisma.$transaction(async () => {
-        const getAddress = this.clientesService.findAllClienteEndereco(id);
-        return getAddress;
-      });
+      return this.clientesService.findAllClienteEndereco(id);
     } catch (err) {}
   }
 

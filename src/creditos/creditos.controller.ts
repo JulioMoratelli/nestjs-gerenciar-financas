@@ -34,9 +34,7 @@ export class CreditosController {
     @Param('clienteId') clienteId: number,
   ) {
     try {
-      return await this.prisma.$transaction(async () => {
-        return this.creditosService.findAll(clienteId, id);
-      });
+      return this.creditosService.findAll(clienteId, id);
     } catch (err) {}
   }
 
@@ -46,9 +44,7 @@ export class CreditosController {
     @Param('clienteId') clienteId: number,
   ) {
     try {
-      return await this.prisma.$transaction(async () => {
-        return this.creditosService.findOne(+id, clienteId);
-      });
+      return this.creditosService.findOne(+id, clienteId);
     } catch (err) {}
   }
 
