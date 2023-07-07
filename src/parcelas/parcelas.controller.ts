@@ -36,7 +36,9 @@ export class ParcelasController {
           updateParcelaDto,
         );
       });
-    } catch (err) {}
+    } catch (err) {
+      throw err;
+    }
   }
 
   @Delete(':id')

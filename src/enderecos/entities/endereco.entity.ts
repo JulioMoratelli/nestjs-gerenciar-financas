@@ -1,6 +1,8 @@
 import { Endereco } from '@prisma/client';
 
 export class EnderecoEntity implements Endereco {
+  dataCriado: Date;
+  dataAlterado: Date;
   id: number;
   clienteId: number;
   padrao: boolean;

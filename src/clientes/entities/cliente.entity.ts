@@ -3,6 +3,8 @@ import { Decimal } from '@prisma/client/runtime';
 import { Exclude } from 'class-transformer';
 
 export class ClientesEntity implements Cliente {
+  dataCriado: Date;
+  dataAlterado: Date;
   id: number;
   email: string;
   cpf: string;
@@ -13,4 +15,8 @@ export class ClientesEntity implements Cliente {
 
   @Exclude()
   sobrenome: string;
+
+  constructor(data?: Partial<ClientesEntity>) {
+    Object.assign(this, data);
+  }
 }

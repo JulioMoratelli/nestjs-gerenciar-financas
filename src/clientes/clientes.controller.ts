@@ -33,10 +33,11 @@ export class ClientesController {
   }
 
   @Get(':id')
-  @UseInterceptors(Expose)
+  @UseInterceptors()
   async findOne(@Param('id') id: number): Promise<ClientesEntity> {
     try {
-      return this.clientesService.findOne(+id);
+      const cliente = await this.clientesService.findOne(+id);
+      return new ClientesEntity(cliente);
     } catch (err) {}
   }
 
