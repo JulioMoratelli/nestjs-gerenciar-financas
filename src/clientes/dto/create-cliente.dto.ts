@@ -1,6 +1,6 @@
-import { Expose } from 'class-transformer';
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 import { IsCpfCnpj } from 'decoradores/cpfcnpj.decorador';
+import { CreateEnderecoDto } from 'src/enderecos/dto/create-endereco.dto';
 
 export class CreateClienteDto {
   @IsEmail()
@@ -20,8 +20,5 @@ export class CreateClienteDto {
   @IsNotEmpty()
   sobrenome: string;
 
-  @Expose()
-  get nomeCompleto(): string {
-    return this.nome + ' ' + this.sobrenome;
-  }
+  enderecos?: CreateEnderecoDto;
 }

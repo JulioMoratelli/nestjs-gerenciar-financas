@@ -94,6 +94,10 @@ export class ParcelasService {
     console.log(conta);
     console.log(novoSaldo);
 
+    if (parcela.pago) {
+      throw new Error('');
+    }
+
     if (!parcela) {
       throw new Error('Parcela não existe');
     } else if (parcela.pago) {

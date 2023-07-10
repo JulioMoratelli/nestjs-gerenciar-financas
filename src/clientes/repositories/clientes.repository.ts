@@ -1,32 +1,31 @@
+import { CreateEnderecoDto } from './../../enderecos/dto/create-endereco.dto';
 import { Injectable } from '@nestjs/common';
 import { CreateClienteDto } from '../dto/create-cliente.dto';
 import { UpdateClienteDto } from '../dto/update-cliente.dto';
-import { ClientesEntity } from '../entities/cliente.entity';
-import { cnpj, cpf } from 'cpf-cnpj-validator';
 import { Decimal } from '@prisma/client/runtime';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { Cliente } from '@prisma/client';
 
 @Injectable()
 export class ClientesRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(createClienteDto: CreateClienteDto): Promise<ClientesEntity> {
-    try {
-      const validarCpf = cpf.isValid(createClienteDto.cpf);
-      const validarCnpj = cnpj.isValid(createClienteDto.cpf);
-
-      if (!validarCpf && !validarCnpj) {
-        throw new Error('cpf ou cnpj invalido');
-      }
-
-      const cliente = this.prisma.cliente.create({
-        data: createClienteDto,
-      });
-      return cliente;
-    } catch (err) {}
+  async create(
+    createClienteDto: CreateClienteDto,
+    createEnderecoDto?: CreateEnderecoDto,
+  ): Promise<Cliente> {
+    const cliente = this.prisma.cliente.create({
+      data: {
+        ...createClienteDto,
+        enderecos: {
+          create: createEnderecoDto,
+        },
+      },
+    });
+    return cliente;
   }
 
-  async findOne(id: number): Promise<ClientesEntity> {
+  async findOne(id: number): Promise<Cliente> {
     try {
       const cliente = await this.prisma.cliente.findUnique({
         where: {
@@ -51,7 +50,7 @@ export class ClientesRepository {
     } catch (err) {}
   }
 
-  async findAllComEndereco(): Promise<ClientesEntity[]> {
+  async findAllComEndereco(): Promise<Cliente[]> {
     try {
       const clientes = await this.prisma.cliente.findMany({
         where: {
@@ -78,7 +77,7 @@ export class ClientesRepository {
   async update(
     id: number,
     updateClienteDto: UpdateClienteDto,
-  ): Promise<ClientesEntity> {
+  ): Promise<Cliente> {
     try {
       const cliente = this.prisma.cliente.update({
         where: {
@@ -90,24 +89,19 @@ export class ClientesRepository {
     } catch (err) {}
   }
 
-  async updateSaldoCliente(
-    id: number,
-    saldoAtual: Decimal,
-  ): Promise<ClientesEntity> {
-    try {
-      const cliente = this.prisma.cliente.update({
-        where: {
-          id,
-        },
-        data: {
-          saldo: saldoAtual,
-        },
-      });
-      return cliente;
-    } catch (err) {}
+  async updateSaldoCliente(id: number, saldoAtual: Decimal): Promise<Cliente> {
+    const cliente = this.prisma.cliente.update({
+      where: {
+        id,
+      },
+      data: {
+        saldo: saldoAtual,
+      },
+    });
+    return cliente;
   }
 
-  async remove(id: number): Promise<ClientesEntity> {
+  async remove(id: number): Promise<Cliente> {
     try {
       const cliente = this.prisma.cliente.delete({
         where: {

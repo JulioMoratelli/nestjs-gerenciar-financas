@@ -27,26 +27,20 @@ export class ParcelasController {
     @Param('id') id: string,
     @Body() updateParcelaDto: UpdateParcelaDto,
   ) {
-    try {
-      return await this.prisma.$transaction(async () => {
-        return this.parcelasService.update(
-          clienteId,
-          lancamentoId,
-          +id,
-          updateParcelaDto,
-        );
-      });
-    } catch (err) {
-      throw err;
-    }
+    return await this.prisma.$transaction(async () => {
+      return this.parcelasService.update(
+        clienteId,
+        lancamentoId,
+        +id,
+        updateParcelaDto,
+      );
+    });
   }
 
   @Delete(':id')
   async remove() {
-    try {
-      return await this.prisma.$transaction(async () => {
-        return this.parcelasService.remove();
-      });
-    } catch (err) {}
+    return await this.prisma.$transaction(async () => {
+      return this.parcelasService.remove();
+    });
   }
 }

@@ -30,8 +30,7 @@ export class CreditoRepository {
     });
   }
 
-  async findAll(clienteId: number, id: number): Promise<CreditoEntity[]> {
-    await this.pertence(clienteId, id);
+  async findAll(clienteId: number): Promise<CreditoEntity[]> {
     return this.prisma.credito.findMany({
       where: {
         clienteId,

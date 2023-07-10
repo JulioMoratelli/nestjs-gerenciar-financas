@@ -4,6 +4,8 @@ import { CreditosController } from './creditos.controller';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreditoRepository } from './repositories/credito.repository';
 import { ContaRepository } from 'src/contas/repositories/conta.repository';
+import { ClientesService } from 'src/clientes/clientes.service';
+import { ClientesRepository } from 'src/clientes/repositories/clientes.repository';
 
 @Module({
   controllers: [CreditosController],
@@ -12,6 +14,8 @@ import { ContaRepository } from 'src/contas/repositories/conta.repository';
     PrismaService,
     CreditoRepository,
     ContaRepository,
+    ClientesService,
+    ClientesRepository,
   ],
   exports: [CreditoRepository],
 })

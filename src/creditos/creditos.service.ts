@@ -4,12 +4,14 @@ import { UpdateCreditoDto } from './dto/update-credito.dto';
 import { CreditoRepository } from './repositories/credito.repository';
 import { ContaRepository } from 'src/contas/repositories/conta.repository';
 import { Decimal } from '@prisma/client/runtime';
+import { ClientesService } from 'src/clientes/clientes.service';
 
 @Injectable()
 export class CreditosService {
   constructor(
     private readonly repository: CreditoRepository,
     private contaRepository: ContaRepository,
+    private clienteService: ClientesService,
   ) {}
 
   async create(createCreditoDto: CreateCreditoDto) {
@@ -20,15 +22,18 @@ export class CreditosService {
     const saldoAtual = new Decimal(conta.saldo);
     const novoSaldo = novoCredito.valor.plus(saldoAtual);
 
-    console.log(novoSaldo);
+    // console.log(novoSaldo);
 
     await this.contaRepository.updateSaldoConta(contaId, novoSaldo);
+    await this.clienteService.atualizarSaldoCliente(clienteId);
+
+    // console.log(novoCredito);
 
     return novoCredito;
   }
 
-  async findAll(clienteId: number, id: number) {
-    return this.repository.findAll(clienteId, id);
+  async findAll(clienteId: number) {
+    return this.repository.findAll(clienteId);
   }
 
   async findOne(clineteId: number, id: number) {

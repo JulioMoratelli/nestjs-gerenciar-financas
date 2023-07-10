@@ -5,6 +5,8 @@ CREATE TABLE "clientes" (
     "cpf" TEXT NOT NULL,
     "nome" TEXT NOT NULL,
     "sobrenome" TEXT NOT NULL,
+    "dataCriado" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "dataAlterado" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "saldo" DECIMAL(65,30) NOT NULL DEFAULT 0,
 
     CONSTRAINT "clientes_pkey" PRIMARY KEY ("id")
@@ -21,6 +23,8 @@ CREATE TABLE "enderecos" (
     "complemento" TEXT,
     "cidade" TEXT NOT NULL,
     "cep" INTEGER NOT NULL,
+    "dataCriado" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "dataAlterado" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "enderecos_pkey" PRIMARY KEY ("id")
 );
@@ -31,6 +35,8 @@ CREATE TABLE "contas" (
     "clienteId" INTEGER NOT NULL,
     "nome" TEXT NOT NULL,
     "saldo" DECIMAL(65,30) NOT NULL DEFAULT 0,
+    "dataCriado" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "dataAlterado" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "contas_pkey" PRIMARY KEY ("id")
 );
@@ -41,6 +47,7 @@ CREATE TABLE "creditos" (
     "clienteId" INTEGER NOT NULL,
     "contaId" INTEGER NOT NULL,
     "valor" DECIMAL(65,30) NOT NULL,
+    "dataCriado" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "creditos_pkey" PRIMARY KEY ("id")
 );
@@ -53,6 +60,8 @@ CREATE TABLE "lancamentos" (
     "valorTotal" DECIMAL(65,30) NOT NULL,
     "numeroParcelas" INTEGER NOT NULL,
     "status" TEXT NOT NULL,
+    "dataCriado" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "dataAlterado" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "lancamentos_pkey" PRIMARY KEY ("id")
 );
@@ -66,6 +75,8 @@ CREATE TABLE "parcelas" (
     "numeroParcela" INTEGER NOT NULL,
     "vencimento" TIMESTAMP(3) NOT NULL,
     "valor" DECIMAL(65,30) NOT NULL,
+    "dataCriado" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "dataAlterado" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "pago" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "parcelas_pkey" PRIMARY KEY ("id")

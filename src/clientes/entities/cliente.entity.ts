@@ -1,6 +1,6 @@
 import { Cliente } from '@prisma/client';
 import { Decimal } from '@prisma/client/runtime';
-import { Exclude } from 'class-transformer';
+import { Exclude, Expose } from 'class-transformer';
 
 export class ClientesEntity implements Cliente {
   dataCriado: Date;
@@ -18,5 +18,10 @@ export class ClientesEntity implements Cliente {
 
   constructor(data?: Partial<ClientesEntity>) {
     Object.assign(this, data);
+  }
+
+  @Expose()
+  get nomeCompleto(): string {
+    return this.nome + ' ' + this.sobrenome;
   }
 }

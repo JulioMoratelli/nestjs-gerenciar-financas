@@ -21,20 +21,14 @@ export class LancamentosController {
 
   @Post()
   async create(@Body() createLancamentoDto: CreateLancamentoDto) {
-    try {
-      return await this.prisma.$transaction(async () => {
-        return this.lancamentosService.create(createLancamentoDto);
-      });
-    } catch (err) {}
+    return this.lancamentosService.create(createLancamentoDto);
   }
 
   @Get(':clienteId')
   async findAll(@Param('clienteId') clienteId: number) {
-    try {
-      return await this.prisma.$transaction(async () => {
-        return this.lancamentosService.findAll(clienteId);
-      });
-    } catch (err) {}
+    return await this.prisma.$transaction(async () => {
+      return this.lancamentosService.findAll(clienteId);
+    });
   }
 
   @Get(':id')
@@ -42,11 +36,9 @@ export class LancamentosController {
     @Param('clienteId') clienteId: number,
     @Param('id') id: number,
   ) {
-    try {
-      return await this.prisma.$transaction(async () => {
-        return this.lancamentosService.findOne(+id, clienteId);
-      });
-    } catch (err) {}
+    return await this.prisma.$transaction(async () => {
+      return this.lancamentosService.findOne(+id, clienteId);
+    });
   }
 
   @Patch(':id')
@@ -55,23 +47,19 @@ export class LancamentosController {
     @Param('id') id: string,
     @Body() updateLancamentoDto: UpdateLancamentoDto,
   ) {
-    try {
-      return await this.prisma.$transaction(async () => {
-        return this.lancamentosService.update(
-          clienteId,
-          +id,
-          updateLancamentoDto,
-        );
-      });
-    } catch (err) {}
+    return await this.prisma.$transaction(async () => {
+      return this.lancamentosService.update(
+        clienteId,
+        +id,
+        updateLancamentoDto,
+      );
+    });
   }
 
   @Delete(':id')
   async remove(@Param('clienteId') clienteId: number, @Param('id') id: string) {
-    try {
-      return await this.prisma.$transaction(async () => {
-        return this.lancamentosService.remove(+id, clienteId);
-      });
-    } catch (err) {}
+    return await this.prisma.$transaction(async () => {
+      return this.lancamentosService.remove(+id, clienteId);
+    });
   }
 }

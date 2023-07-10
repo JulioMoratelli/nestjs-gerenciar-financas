@@ -21,31 +21,26 @@ export class CreditosController {
 
   @Post()
   async create(@Body() createCreditoDto: CreateCreditoDto) {
-    try {
-      return await this.prisma.$transaction(async () => {
-        return this.creditosService.create(createCreditoDto);
-      });
-    } catch (err) {}
+    return await this.prisma.$transaction(async () => {
+      return this.creditosService.create(createCreditoDto);
+    });
   }
 
-  @Get()
-  async findAll(
-    @Param('id') id: number,
-    @Param('clienteId') clienteId: number,
-  ) {
-    try {
-      return this.creditosService.findAll(clienteId, id);
-    } catch (err) {}
+  @Get(':clienteId')
+  async findAll(@Param('clienteId') clienteId: number) {
+    return await this.prisma.$transaction(async () => {
+      return this.creditosService.findAll(clienteId);
+    });
   }
 
-  @Get(':id')
+  @Get(':clienteId/:id')
   async findOne(
     @Param('id') id: string,
     @Param('clienteId') clienteId: number,
   ) {
-    try {
+    return await this.prisma.$transaction(async () => {
       return this.creditosService.findOne(+id, clienteId);
-    } catch (err) {}
+    });
   }
 
   @Patch(':id')
@@ -54,19 +49,15 @@ export class CreditosController {
     @Param('clienteId') clienteId: number,
     @Body() updateCreditoDto: UpdateCreditoDto,
   ) {
-    try {
-      return await this.prisma.$transaction(async () => {
-        return this.creditosService.update(+id, clienteId, updateCreditoDto);
-      });
-    } catch (err) {}
+    return await this.prisma.$transaction(async () => {
+      return this.creditosService.update(+id, clienteId, updateCreditoDto);
+    });
   }
 
   @Delete(':id')
   async remove(@Param('id') id: string, @Param('clienteId') clienteId: number) {
-    try {
-      return await this.prisma.$transaction(async () => {
-        return this.creditosService.remove(+id, clienteId);
-      });
-    } catch (err) {}
+    return await this.prisma.$transaction(async () => {
+      return this.creditosService.remove(+id, clienteId);
+    });
   }
 }
