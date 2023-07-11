@@ -4,6 +4,7 @@ import { CreateEnderecoDto } from '../dto/create-endereco.dto';
 import { UpdateEnderecoDto } from '../dto/update-endereco.dto';
 import { EnderecoEntity } from '../entities/endereco.entity';
 import { Prisma } from '@prisma/client';
+import { ClienteComEnderecoDto } from 'src/clientes/dto/clienteEndereco.dto';
 
 @Injectable()
 export class EnderecosRepository {
@@ -27,6 +28,26 @@ export class EnderecosRepository {
 
     return this.prisma.endereco.create({
       data: createEnderecoDto,
+    });
+  }
+
+  async createComEndereco(
+    clienteComEnderecoDto: ClienteComEnderecoDto,
+    clienteIndex: number,
+  ) {
+    const { cep, rua, numero, bairro, complemento, cidade } =
+      clienteComEnderecoDto;
+    return this.prisma.endereco.create({
+      data: {
+        cep,
+        clienteId: clienteIndex,
+        padrao: true,
+        rua,
+        numero,
+        bairro,
+        complemento,
+        cidade,
+      },
     });
   }
 

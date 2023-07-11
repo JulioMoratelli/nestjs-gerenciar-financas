@@ -2,7 +2,7 @@ import { ContaRepository } from './../contas/repositories/conta.repository';
 import { Injectable } from '@nestjs/common';
 import { CreateParcelaDto } from './dto/create-parcela.dto';
 import { UpdateParcelaDto } from './dto/update-parcela.dto';
-import { ParcelasRepository } from './parcelas.repository';
+import { ParcelasRepository } from './repository/parcelas.repository';
 import { Decimal } from '@prisma/client/runtime';
 import { addDays } from 'date-fns';
 

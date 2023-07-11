@@ -13,7 +13,7 @@ import { CreateClienteDto } from './dto/create-cliente.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ClientesEntity } from './entities/cliente.entity';
-import { CreateEnderecoDto } from 'src/enderecos/dto/create-endereco.dto';
+import { ClienteComEnderecoDto } from './dto/clienteEndereco.dto';
 
 @Controller('clientes')
 export class ClientesController {
@@ -24,16 +24,22 @@ export class ClientesController {
 
   @Post()
   @UseInterceptors()
-  async create(
-    @Body() createClienteDto: CreateClienteDto,
-    createEnderecoDto?: CreateEnderecoDto,
+  async create(@Body() createClienteDto: CreateClienteDto) {
+    return await this.prisma.$transaction(async () => {
+      const create = await this.clientesService.create(createClienteDto);
+      return new ClientesEntity(create);
+    });
+  }
+
+  @Post('clienteComEndereco')
+  @UseInterceptors()
+  async createClienteComEndereco(
+    @Body() clienteComEnderecoDto: ClienteComEnderecoDto,
   ) {
     return await this.prisma.$transaction(async () => {
-      const create = await this.clientesService.create(
-        createClienteDto,
-        createEnderecoDto,
+      return await this.clientesService.clienteComEndereco(
+        clienteComEnderecoDto,
       );
-      return new ClientesEntity(create);
     });
   }
 

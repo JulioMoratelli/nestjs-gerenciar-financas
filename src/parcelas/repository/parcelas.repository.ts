@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateParcelaDto } from './dto/create-parcela.dto';
-import { ParcelaEntity } from './entities/parcela.entity';
-import { UpdateParcelaDto } from './dto/update-parcela.dto';
+import { CreateParcelaDto } from '../dto/create-parcela.dto';
+import { ParcelaEntity } from '../entities/parcela.entity';
+import { UpdateParcelaDto } from '../dto/update-parcela.dto';
 
 @Injectable()
 export class ParcelasRepository {

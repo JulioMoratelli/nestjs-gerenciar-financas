@@ -5,13 +5,15 @@ import { ClientesRepository } from './repositories/clientes.repository';
 import { Decimal } from '@prisma/client/runtime';
 import { ContaRepository } from 'src/contas/repositories/conta.repository';
 import { Cliente } from '@prisma/client';
-import { CreateEnderecoDto } from 'src/enderecos/dto/create-endereco.dto';
+import { ClienteComEnderecoDto } from './dto/clienteEndereco.dto';
+import { EnderecosRepository } from 'src/enderecos/repositories/enderecos.repository';
 
 @Injectable()
 export class ClientesService {
   constructor(
     private readonly repository: ClientesRepository,
     private contasRepository: ContaRepository,
+    private enderecoRepository: EnderecosRepository,
   ) {}
 
   async atualizarSaldoCliente(clienteId: number): Promise<void> {
@@ -28,15 +30,24 @@ export class ClientesService {
     await this.repository.updateSaldoCliente(clienteId, saldoAtual);
   }
 
-  async create(
-    createClienteDto: CreateClienteDto,
-    createEnderecoDto?: CreateEnderecoDto,
-  ) {
-    const cliente = await this.repository.create(
-      createClienteDto,
-      createEnderecoDto,
-    );
+  async create(createClienteDto: CreateClienteDto) {
+    const cliente = await this.repository.create(createClienteDto);
     return cliente;
+  }
+
+  async clienteComEndereco(clienteComEnderecoDto: ClienteComEnderecoDto) {
+    const cliente = await this.repository.createClienteComEndereco(
+      clienteComEnderecoDto,
+    );
+
+    const clienteIndex = cliente.id;
+
+    const endereco = await this.enderecoRepository.createComEndereco(
+      clienteComEnderecoDto,
+      clienteIndex,
+    );
+
+    return { cliente, endereco };
   }
 
   async findOne(id: number) {
