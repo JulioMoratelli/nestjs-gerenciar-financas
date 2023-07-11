@@ -1,5 +1,6 @@
+import { CreateEnderecoDto } from 'src/enderecos/dto/create-endereco.dto';
+import { ClienteComEnderecoDto } from './../clientes/dto/clienteEndereco.dto';
 import { Injectable } from '@nestjs/common';
-import { CreateEnderecoDto } from './dto/create-endereco.dto';
 import { UpdateEnderecoDto } from './dto/update-endereco.dto';
 import { EnderecosRepository } from './repositories/enderecos.repository';
 
@@ -9,6 +10,26 @@ export class EnderecosService {
 
   create(createEnderecoDto: CreateEnderecoDto) {
     return this.repository.create(createEnderecoDto);
+  }
+
+  createComCliente(
+    clienteComEnderecoDto: ClienteComEnderecoDto,
+    clienteId: number,
+  ) {
+    const { cep, rua, numero, bairro, complemento, cidade, padrao } =
+      clienteComEnderecoDto;
+
+    const dadosCreateEndereco = {
+      cep,
+      rua,
+      numero,
+      bairro,
+      complemento,
+      cidade,
+      clienteId: clienteId,
+      padrao,
+    };
+    return this.repository.create(dadosCreateEndereco);
   }
 
   findAll(clienteId: number) {

@@ -8,6 +8,7 @@ import { ContasModule } from 'src/contas/contas.module';
 import { ContaRepository } from 'src/contas/repositories/conta.repository';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { EnderecosRepository } from 'src/enderecos/repositories/enderecos.repository';
+import { EnderecosService } from 'src/enderecos/enderecos.service';
 
 @Module({
   controllers: [ClientesController],
@@ -19,6 +20,7 @@ import { EnderecosRepository } from 'src/enderecos/repositories/enderecos.reposi
     ContasService,
     ContaRepository,
     EnderecosRepository,
+    EnderecosService,
   ],
   imports: [ContasModule],
 })

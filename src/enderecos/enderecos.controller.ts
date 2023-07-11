@@ -8,10 +8,11 @@ import {
   Delete,
 } from '@nestjs/common';
 import { EnderecosService } from './enderecos.service';
-import { CreateEnderecoDto } from './dto/create-endereco.dto';
 import { UpdateEnderecoDto } from './dto/update-endereco.dto';
 import { EnderecoEntity } from './entities/endereco.entity';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { ClienteComEnderecoDto } from 'src/clientes/dto/clienteEndereco.dto';
+import { CreateEnderecoDto } from './dto/create-endereco.dto';
 
 @Controller('enderecos')
 export class EnderecosController {
@@ -21,12 +22,26 @@ export class EnderecosController {
   ) {}
 
   @Post()
-  async create(@Body() createEnderecoDto: CreateEnderecoDto) {
-    try {
-      return await this.prisma.$transaction(async () => {
-        return this.enderecosService.create(createEnderecoDto);
-      });
-    } catch (err) {}
+  async create(
+    @Body()
+    createEnderecoDto: CreateEnderecoDto,
+  ) {
+    return await this.prisma.$transaction(async () => {
+      return this.enderecosService.create(createEnderecoDto);
+    });
+  }
+
+  @Post()
+  async createComEndereco(
+    @Body() clienteId: number,
+    clienteComEnderecoDto: ClienteComEnderecoDto,
+  ) {
+    return await this.prisma.$transaction(async () => {
+      return this.enderecosService.createComCliente(
+        clienteComEnderecoDto,
+        clienteId,
+      );
+    });
   }
 
   @Get()

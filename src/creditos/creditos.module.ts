@@ -7,6 +7,8 @@ import { ContaRepository } from 'src/contas/repositories/conta.repository';
 import { ClientesService } from 'src/clientes/clientes.service';
 import { ClientesRepository } from 'src/clientes/repositories/clientes.repository';
 import { EnderecosRepository } from 'src/enderecos/repositories/enderecos.repository';
+import { EnderecosService } from 'src/enderecos/enderecos.service';
+import { ClientesEntity } from 'src/clientes/entities/cliente.entity';
 
 @Module({
   controllers: [CreditosController],
@@ -18,6 +20,8 @@ import { EnderecosRepository } from 'src/enderecos/repositories/enderecos.reposi
     ClientesService,
     ClientesRepository,
     EnderecosRepository,
+    EnderecosService,
+    ClientesEntity,
   ],
   exports: [CreditoRepository],
 })

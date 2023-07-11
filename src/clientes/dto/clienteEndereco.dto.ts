@@ -27,33 +27,34 @@ export class ClienteComEnderecoDto {
   sobrenome: string;
 
   @IsNumber()
-  clienteId: number;
+  @IsOptional()
+  clienteId?: number;
 
   @IsBoolean()
-  @IsNotEmpty()
-  padrao: boolean;
+  @IsOptional()
+  padrao?: boolean;
 
   @IsString()
-  @IsNotEmpty()
-  rua: string;
+  @IsOptional()
+  rua?: string;
 
   @IsNumber()
-  @IsNotEmpty()
-  numero: number;
+  @IsOptional()
+  numero?: number;
 
   @IsString()
-  @IsNotEmpty()
-  bairro: string;
+  @IsOptional()
+  bairro?: string;
 
   @IsString()
   @IsOptional()
   complemento?: string;
 
   @IsString()
-  @IsNotEmpty()
-  cidade: string;
+  @IsOptional()
+  cidade?: string;
 
   @IsNumber()
-  @IsNotEmpty()
-  cep: number;
+  @IsOptional()
+  cep?: number;
 }

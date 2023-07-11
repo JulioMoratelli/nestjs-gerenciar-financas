@@ -4,7 +4,6 @@ import { UpdateClienteDto } from '../dto/update-cliente.dto';
 import { Decimal } from '@prisma/client/runtime';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Cliente } from '@prisma/client';
-import { ClienteComEnderecoDto } from '../dto/clienteEndereco.dto';
 
 @Injectable()
 export class ClientesRepository {
@@ -15,18 +14,6 @@ export class ClientesRepository {
       data: createClienteDto,
     });
     return cliente;
-  }
-
-  async createClienteComEndereco(clienteComEnderecoDto: ClienteComEnderecoDto) {
-    const { email, cpf, nome, sobrenome } = clienteComEnderecoDto;
-    return this.prisma.cliente.create({
-      data: {
-        email,
-        cpf,
-        nome,
-        sobrenome,
-      },
-    });
   }
 
   async findOne(id: number): Promise<Cliente> {

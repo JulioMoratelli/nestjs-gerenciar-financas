@@ -6,14 +6,14 @@ import { Decimal } from '@prisma/client/runtime';
 import { ContaRepository } from 'src/contas/repositories/conta.repository';
 import { Cliente } from '@prisma/client';
 import { ClienteComEnderecoDto } from './dto/clienteEndereco.dto';
-import { EnderecosRepository } from 'src/enderecos/repositories/enderecos.repository';
+import { EnderecosService } from 'src/enderecos/enderecos.service';
 
 @Injectable()
 export class ClientesService {
   constructor(
     private readonly repository: ClientesRepository,
     private contasRepository: ContaRepository,
-    private enderecoRepository: EnderecosRepository,
+    private enderecoRepository: EnderecosService,
   ) {}
 
   async atualizarSaldoCliente(clienteId: number): Promise<void> {
@@ -36,13 +36,13 @@ export class ClientesService {
   }
 
   async clienteComEndereco(clienteComEnderecoDto: ClienteComEnderecoDto) {
-    const cliente = await this.repository.createClienteComEndereco(
-      clienteComEnderecoDto,
-    );
+    const { email, cpf, nome, sobrenome } = clienteComEnderecoDto;
+    const dadosCreateCliente = { email, cpf, nome, sobrenome };
+    const cliente = await this.repository.create(dadosCreateCliente);
 
     const clienteIndex = cliente.id;
 
-    const endereco = await this.enderecoRepository.createComEndereco(
+    const endereco = await this.enderecoRepository.createComCliente(
       clienteComEnderecoDto,
       clienteIndex,
     );
