@@ -9,6 +9,7 @@ import { ContaRepository } from 'src/contas/repositories/conta.repository';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { EnderecosRepository } from 'src/enderecos/repositories/enderecos.repository';
 import { EnderecosService } from 'src/enderecos/enderecos.service';
+import { CreateClienteDto } from './dto/create-cliente.dto';
 
 @Module({
   controllers: [ClientesController],
@@ -21,6 +22,7 @@ import { EnderecosService } from 'src/enderecos/enderecos.service';
     ContaRepository,
     EnderecosRepository,
     EnderecosService,
+    CreateClienteDto,
   ],
   imports: [ContasModule],
 })

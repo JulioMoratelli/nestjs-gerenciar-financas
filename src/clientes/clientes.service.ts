@@ -13,7 +13,8 @@ export class ClientesService {
   constructor(
     private readonly repository: ClientesRepository,
     private contasRepository: ContaRepository,
-    private enderecoRepository: EnderecosService,
+    private enderecoService: EnderecosService,
+    private clinteDto: CreateClienteDto,
   ) {}
 
   async atualizarSaldoCliente(clienteId: number): Promise<void> {
@@ -40,14 +41,20 @@ export class ClientesService {
     const dadosCreateCliente = { email, cpf, nome, sobrenome };
     const cliente = await this.repository.create(dadosCreateCliente);
 
-    const clienteIndex = cliente.id;
+    if (dadosCreateCliente === this.clinteDto) {
+      return cliente;
+    }
 
-    const endereco = await this.enderecoRepository.createComCliente(
-      clienteComEnderecoDto,
-      clienteIndex,
-    );
+    if (!dadosCreateCliente) {
+      const clienteIndex = cliente.id;
 
-    return { cliente, endereco };
+      const endereco = await this.enderecoService.createComCliente(
+        clienteComEnderecoDto,
+        clienteIndex,
+      );
+
+      return endereco;
+    }
   }
 
   async findOne(id: number) {

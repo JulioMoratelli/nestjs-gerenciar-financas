@@ -9,6 +9,7 @@ import { ClientesRepository } from 'src/clientes/repositories/clientes.repositor
 import { EnderecosRepository } from 'src/enderecos/repositories/enderecos.repository';
 import { EnderecosService } from 'src/enderecos/enderecos.service';
 import { ClientesEntity } from 'src/clientes/entities/cliente.entity';
+import { CreateClienteDto } from 'src/clientes/dto/create-cliente.dto';
 
 @Module({
   controllers: [CreditosController],
@@ -22,6 +23,7 @@ import { ClientesEntity } from 'src/clientes/entities/cliente.entity';
     EnderecosRepository,
     EnderecosService,
     ClientesEntity,
+    CreateClienteDto,
   ],
   exports: [CreditoRepository],
 })

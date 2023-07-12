@@ -34,7 +34,7 @@ export class ClientesController {
   @Post('clienteComEndereco')
   @UseInterceptors()
   async createClienteComEndereco(
-    @Body() clienteComEnderecoDto: ClienteComEnderecoDto,
+    @Body() clienteComEnderecoDto: ClienteComEnderecoDto | CreateClienteDto,
   ) {
     return await this.prisma.$transaction(async () => {
       return await this.clientesService.clienteComEndereco(
