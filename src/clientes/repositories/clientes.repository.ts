@@ -12,12 +12,18 @@ export class ClientesRepository {
     // createClienteDto: CreateClienteDto,
     data: Prisma.ClienteUncheckedCreateInput,
   ): Promise<Cliente> {
-    const cliente = this.prisma.cliente.create({
-      data: {
-        ...data,
-      },
-    });
-    return cliente;
+    try {
+      return await this.prisma.$transaction(async (trx) => {
+        const cliente = trx.cliente.create({
+          data: {
+            ...data,
+          },
+        });
+        return cliente;
+      });
+    } catch (Error) {
+      throw new Error('dados invalidos');
+    }
   }
 
   async findOne(id: number): Promise<Cliente> {

@@ -26,10 +26,6 @@ export class ClienteComEnderecoDto {
   @IsNotEmpty()
   sobrenome: string;
 
-  @IsNumber()
-  @IsOptional()
-  clienteId?: number;
-
   @IsBoolean()
   @IsOptional()
   padrao?: boolean;

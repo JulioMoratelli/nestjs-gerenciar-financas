@@ -44,7 +44,7 @@ export class EnderecosController {
     });
   }
 
-  @Get()
+  @Get(':clienteId')
   findAll(@Param('clienteId') clienteId: number) {
     return this.enderecosService.findAll(clienteId);
   }

@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { CreateClienteDto } from './dto/create-cliente.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
 import { ClientesRepository } from './repositories/clientes.repository';
 import { Decimal } from '@prisma/client/runtime';
 import { ContaRepository } from 'src/contas/repositories/conta.repository';
 import { Cliente } from '@prisma/client';
-import { ClienteComEnderecoDto } from './dto/clienteEndereco.dto';
 import { EnderecosService } from 'src/enderecos/enderecos.service';
+import { ClienteComEnderecoDto } from './dto/clienteEndereco.dto';
 
 @Injectable()
 export class ClientesService {
@@ -14,7 +13,6 @@ export class ClientesService {
     private readonly repository: ClientesRepository,
     private contasRepository: ContaRepository,
     private enderecoService: EnderecosService,
-    private clinteDto: CreateClienteDto,
   ) {}
 
   async atualizarSaldoCliente(clienteId: number): Promise<void> {
@@ -31,21 +29,12 @@ export class ClientesService {
     await this.repository.updateSaldoCliente(clienteId, saldoAtual);
   }
 
-  async create(createClienteDto: CreateClienteDto) {
-    const cliente = await this.repository.create(createClienteDto);
-    return cliente;
-  }
-
   async clienteComEndereco(clienteComEnderecoDto: ClienteComEnderecoDto) {
     const { email, cpf, nome, sobrenome } = clienteComEnderecoDto;
     const dadosCreateCliente = { email, cpf, nome, sobrenome };
-    const cliente = await this.repository.create(dadosCreateCliente);
 
-    if (dadosCreateCliente === this.clinteDto) {
-      return cliente;
-    }
-
-    if (!dadosCreateCliente) {
+    if (clienteComEnderecoDto.rua) {
+      const cliente = await this.repository.create(dadosCreateCliente);
       const clienteIndex = cliente.id;
 
       const endereco = await this.enderecoService.createComCliente(
@@ -53,8 +42,11 @@ export class ClientesService {
         clienteIndex,
       );
 
-      return endereco;
+      return { cliente, endereco };
     }
+
+    const cliente = await this.repository.create(dadosCreateCliente);
+    return cliente;
   }
 
   async findOne(id: number) {

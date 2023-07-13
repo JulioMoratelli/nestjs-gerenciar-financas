@@ -22,25 +22,12 @@ export class ClientesController {
     private prisma: PrismaService,
   ) {}
 
-  @Post()
-  @UseInterceptors()
-  async create(@Body() createClienteDto: CreateClienteDto) {
-    return await this.prisma.$transaction(async () => {
-      const create = await this.clientesService.create(createClienteDto);
-      return new ClientesEntity(create);
-    });
-  }
-
   @Post('clienteComEndereco')
   @UseInterceptors()
   async createClienteComEndereco(
     @Body() clienteComEnderecoDto: ClienteComEnderecoDto | CreateClienteDto,
   ) {
-    return await this.prisma.$transaction(async () => {
-      return await this.clientesService.clienteComEndereco(
-        clienteComEnderecoDto,
-      );
-    });
+    return await this.clientesService.clienteComEndereco(clienteComEnderecoDto);
   }
 
   @Get(':id')
