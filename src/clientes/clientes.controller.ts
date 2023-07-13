@@ -26,10 +26,11 @@ export class ClientesController {
   @UseInterceptors()
   async createClienteComEndereco(
     @Body() clienteComEnderecoDto: ClienteComEnderecoDto | CreateClienteDto,
-  ) {
-    return await this.clientesService.createClienteComEndereco(
+  ): Promise<ClientesEntity> {
+    const novoCliente = await this.clientesService.createClienteComEndereco(
       clienteComEnderecoDto,
     );
+    return new ClientesEntity(novoCliente);
   }
 
   @Get(':id')
