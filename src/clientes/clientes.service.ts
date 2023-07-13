@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
 import { ClientesRepository } from './repositories/clientes.repository';
 import { Decimal } from '@prisma/client/runtime';
 import { ContaRepository } from 'src/contas/repositories/conta.repository';
-import { Cliente } from '@prisma/client';
+import { Cliente, Prisma } from '@prisma/client';
 import { EnderecosService } from 'src/enderecos/enderecos.service';
 import { ClienteComEnderecoDto } from './dto/clienteEndereco.dto';
 
@@ -29,14 +29,26 @@ export class ClientesService {
     await this.repository.updateSaldoCliente(clienteId, saldoAtual);
   }
 
-  async clienteComEndereco(clienteComEnderecoDto: ClienteComEnderecoDto) {
+  async validandoEmail(email: string) {
+    const clientes = await this.repository.findAllComEndereco();
+
+    for (const cliente of clientes) {
+      if (cliente.email === email) {
+        throw new BadRequestException('Esse email já está cadastrado');
+      }
+    }
+  }
+
+  async createClienteComEndereco(clienteComEnderecoDto: ClienteComEnderecoDto) {
     const { email, cpf, nome, sobrenome } = clienteComEnderecoDto;
     const dadosCreateCliente = { email, cpf, nome, sobrenome };
 
+    await this.validandoEmail(dadosCreateCliente.email);
+
     if (clienteComEnderecoDto.rua) {
       const cliente = await this.repository.create(dadosCreateCliente);
-      const clienteIndex = cliente.id;
 
+      const clienteIndex = cliente.id;
       const endereco = await this.enderecoService.createComCliente(
         clienteComEnderecoDto,
         clienteIndex,
@@ -50,19 +62,38 @@ export class ClientesService {
   }
 
   async findOne(id: number) {
-    return await this.repository.findOne(id);
+    const cliente = await this.repository.findOne(id);
+
+    if (!cliente) {
+      throw new BadRequestException('Esse cliente não existe');
+    }
+
+    return cliente;
   }
 
-  async findAllClienteEndereco(id: number): Promise<Cliente[]> {
-    await this.repository.findOne(id);
+  async findAllClienteEndereco(): Promise<Cliente[]> {
     return this.repository.findAllComEndereco();
   }
 
-  update(id: number, updateClienteDto: UpdateClienteDto) {
+  async update(id: number, updateClienteDto: UpdateClienteDto) {
+    const cliente = await this.repository.findOne(id);
+
+    if (!cliente) {
+      throw new BadRequestException('Cliente não existe');
+    }
+    // cliente.dataAlterado = new Date(now());
+    await this.validandoEmail(updateClienteDto.email);
+
     return this.repository.update(id, updateClienteDto);
   }
 
-  remove(id: number) {
-    return this.repository.remove(id);
+  async remove(id: number, trx: Prisma.TransactionClient) {
+    const cliente = await this.repository.findOne(id);
+
+    if (!cliente) {
+      throw new BadRequestException('Cliente não existe');
+    }
+
+    return this.repository.remove(id, trx);
   }
 }

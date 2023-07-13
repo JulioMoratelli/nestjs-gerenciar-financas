@@ -27,7 +27,9 @@ export class ClientesController {
   async createClienteComEndereco(
     @Body() clienteComEnderecoDto: ClienteComEnderecoDto | CreateClienteDto,
   ) {
-    return await this.clientesService.clienteComEndereco(clienteComEnderecoDto);
+    return await this.clientesService.createClienteComEndereco(
+      clienteComEnderecoDto,
+    );
   }
 
   @Get(':id')
@@ -39,10 +41,8 @@ export class ClientesController {
 
   @Get('enderecos/:id')
   @UseInterceptors()
-  async findAllClienteEndereco(
-    @Param('id') id: number,
-  ): Promise<ClientesEntity[]> {
-    const comEndereco = await this.clientesService.findAllClienteEndereco(id);
+  async findAllClienteEndereco(): Promise<ClientesEntity[]> {
+    const comEndereco = await this.clientesService.findAllClienteEndereco();
     const clientesEntities = comEndereco.map(
       (result) => new ClientesEntity(result),
     );
@@ -54,16 +54,14 @@ export class ClientesController {
     @Param('id') id: string,
     @Body() updateClienteDto: UpdateClienteDto,
   ) {
-    return await this.prisma.$transaction(async () => {
-      const update = this.clientesService.update(+id, updateClienteDto);
-      return update;
-    });
+    const update = this.clientesService.update(+id, updateClienteDto);
+    return update;
   }
 
   @Delete(':id')
   async remove(@Param('id') id: string) {
-    return await this.prisma.$transaction(async () => {
-      const delet = this.clientesService.remove(+id);
+    return await this.prisma.$transaction(async (trx) => {
+      const delet = this.clientesService.remove(+id, trx);
       return delet;
     });
   }

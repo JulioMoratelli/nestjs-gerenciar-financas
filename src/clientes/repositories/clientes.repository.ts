@@ -75,13 +75,19 @@ export class ClientesRepository {
     id: number,
     updateClienteDto: UpdateClienteDto,
   ): Promise<Cliente> {
-    const cliente = this.prisma.cliente.update({
-      where: {
-        id,
-      },
-      data: updateClienteDto,
-    });
-    return cliente;
+    try {
+      return await this.prisma.$transaction(async (trx) => {
+        const cliente = trx.cliente.update({
+          where: {
+            id,
+          },
+          data: updateClienteDto,
+        });
+        return cliente;
+      });
+    } catch (Error) {
+      throw new Error('dados invalidos');
+    }
   }
 
   async updateSaldoCliente(id: number, saldoAtual: Decimal): Promise<Cliente> {
@@ -96,8 +102,8 @@ export class ClientesRepository {
     return cliente;
   }
 
-  async remove(id: number): Promise<Cliente> {
-    const cliente = this.prisma.cliente.delete({
+  async remove(id: number, trx: Prisma.TransactionClient): Promise<Cliente> {
+    const cliente = trx.cliente.delete({
       where: {
         id,
       },
