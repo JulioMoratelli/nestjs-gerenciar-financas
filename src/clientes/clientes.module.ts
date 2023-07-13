@@ -3,8 +3,6 @@ import { ClientesService } from './clientes.service';
 import { ClientesController } from './clientes.controller';
 import { ClientesRepository } from './repositories/clientes.repository';
 import { ClientesEntity } from './entities/cliente.entity';
-import { ContasService } from 'src/contas/contas.service';
-import { ContasModule } from 'src/contas/contas.module';
 import { ContaRepository } from 'src/contas/repositories/conta.repository';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { EnderecosRepository } from 'src/enderecos/repositories/enderecos.repository';
@@ -17,13 +15,12 @@ import { CreateClienteDto } from './dto/create-cliente.dto';
     ClientesService,
     ClientesRepository,
     PrismaService,
-    ClientesEntity,
-    ContasService,
+
     ContaRepository,
+
     EnderecosRepository,
     EnderecosService,
-    CreateClienteDto,
   ],
-  imports: [ContasModule],
+  imports: [CreateClienteDto, ClientesEntity],
 })
 export class ClientesModule {}
