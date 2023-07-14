@@ -1,5 +1,4 @@
 import {
-  IsBoolean,
   IsEmail,
   IsNotEmpty,
   IsNumber,
@@ -25,10 +24,6 @@ export class ClienteComEnderecoDto {
   @IsString()
   @IsNotEmpty()
   sobrenome: string;
-
-  @IsBoolean()
-  @IsOptional()
-  padrao?: boolean;
 
   @IsString()
   @IsOptional()

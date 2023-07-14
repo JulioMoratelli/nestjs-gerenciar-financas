@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { UpdateClienteDto } from '../dto/update-cliente.dto';
 import { Decimal } from '@prisma/client/runtime';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -22,7 +22,7 @@ export class ClientesRepository {
         return cliente;
       });
     } catch (Error) {
-      throw new Error('dados invalidos');
+      throw new BadRequestException('dados invalidos');
     }
   }
 

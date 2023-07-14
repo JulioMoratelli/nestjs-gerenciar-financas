@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseInterceptors,
+  BadRequestException,
 } from '@nestjs/common';
 import { ClientesService } from './clientes.service';
 import { CreateClienteDto } from './dto/create-cliente.dto';
@@ -26,11 +27,15 @@ export class ClientesController {
   @UseInterceptors()
   async createClienteComEndereco(
     @Body() clienteComEnderecoDto: ClienteComEnderecoDto | CreateClienteDto,
-  ): Promise<ClientesEntity> {
-    const novoCliente = await this.clientesService.createClienteComEndereco(
-      clienteComEnderecoDto,
-    );
-    return new ClientesEntity(novoCliente);
+  ) {
+    try {
+      return await this.clientesService.createClienteComEndereco(
+        clienteComEnderecoDto,
+      );
+    } catch (err) {
+      err.description = err.message;
+      throw new BadRequestException(err);
+    }
   }
 
   @Get(':id')
@@ -40,7 +45,7 @@ export class ClientesController {
     return new ClientesEntity(cliente);
   }
 
-  @Get('enderecos/:id')
+  @Get()
   @UseInterceptors()
   async findAllClienteEndereco(): Promise<ClientesEntity[]> {
     const comEndereco = await this.clientesService.findAllClienteEndereco();
@@ -55,8 +60,10 @@ export class ClientesController {
     @Param('id') id: string,
     @Body() updateClienteDto: UpdateClienteDto,
   ) {
-    const update = this.clientesService.update(+id, updateClienteDto);
-    return update;
+    return await this.prisma.$transaction(async () => {
+      const update = this.clientesService.update(+id, updateClienteDto);
+      return update;
+    });
   }
 
   @Delete(':id')

@@ -16,7 +16,7 @@ export class EnderecosService {
     clienteComEnderecoDto: ClienteComEnderecoDto,
     clienteId: number,
   ) {
-    const { cep, rua, numero, bairro, complemento, cidade, padrao } =
+    const { cep, rua, numero, bairro, complemento, cidade } =
       clienteComEnderecoDto;
 
     const dadosCreateEndereco = {
@@ -27,7 +27,7 @@ export class EnderecosService {
       complemento,
       cidade,
       clienteId: clienteId,
-      padrao,
+      padrao: true,
     };
     return this.repository.create(dadosCreateEndereco);
   }
