@@ -7,7 +7,6 @@ import {
   Patch,
   Param,
   Delete,
-  UseInterceptors,
   BadRequestException,
 } from '@nestjs/common';
 import { ClientesService } from './clientes.service';
@@ -24,9 +23,9 @@ export class ClientesController {
   ) {}
 
   @Post('clienteComEndereco')
-  @UseInterceptors()
   async createClienteComEndereco(
-    @Body() clienteComEnderecoDto: ClienteComEnderecoDto | CreateClienteDto,
+    // @Body() clienteComEnderecoDto: ClienteComEnderecoDto | CreateClienteDto,
+    @Body() clienteComEnderecoDto: ClienteComEnderecoDto,
   ) {
     try {
       return await this.clientesService.createClienteComEndereco(
@@ -39,14 +38,12 @@ export class ClientesController {
   }
 
   @Get(':id')
-  @UseInterceptors()
   async findOne(@Param('id') id: number): Promise<ClientesEntity> {
     const cliente = await this.clientesService.findOne(+id);
     return new ClientesEntity(cliente);
   }
 
   @Get()
-  @UseInterceptors()
   async findAllClienteEndereco(): Promise<ClientesEntity[]> {
     const comEndereco = await this.clientesService.findAllClienteEndereco();
     const clientesEntities = comEndereco.map(

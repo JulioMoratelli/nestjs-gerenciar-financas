@@ -45,6 +45,22 @@ export class ClientesService {
 
     await this.validandoEmail(dadosCreateCliente.email);
 
+    /*
+    🗣️ aqui precisa melhorar a validação. pra cadastrar um endereço, apenas o 
+    campo "complemento" é opcional. 
+    primeiramente vc precisa saber se é preciso validar um endereço, ou seja,
+    se qualquer campo de endereço foi informado, e não apenas a "rua".
+    ou seja:
+    
+      1) informou algum dado de endereço?
+        -sim) 
+          2) valida todos os dados de endereço
+          
+        -não) continua
+
+    e tbm tá faltando a transécxon 😅
+    */
+
     if (clienteComEnderecoDto.rua) {
       const cliente = await this.repository.create(dadosCreateCliente);
 
@@ -75,12 +91,20 @@ export class ClientesService {
     return this.repository.findAllComEndereco();
   }
 
+  /*
+  🗣️ aqui provavelmente sempre vai dar um erro no método validandoEmail()
+      qdo o usuário não alterar o email.
+      uma maneira de resolver isso seria acrescentar um segundo parâmetro
+      opcional "clienteId" e caso ele exista, validar só nos clientes que não sejam esse.
+      o método opcional permitiria vc usar o método tanto pra novos clientes qto pra alteração de clientes.
+  */
   async update(id: number, updateClienteDto: UpdateClienteDto) {
     const cliente = await this.repository.findOne(id);
 
     if (!cliente) {
       throw new BadRequestException('Cliente não existe');
     }
+
     // cliente.dataAlterado = new Date(now());
     await this.validandoEmail(updateClienteDto.email);
 
