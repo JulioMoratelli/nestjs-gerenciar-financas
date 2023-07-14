@@ -1,10 +1,10 @@
+import { EnderecosService } from './../enderecos/enderecos.service';
+import { ContaRepository } from './../contas/repositories/conta.repository';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
 import { ClientesRepository } from './repositories/clientes.repository';
 import { Decimal } from '@prisma/client/runtime';
-import { ContaRepository } from 'src/contas/repositories/conta.repository';
 import { Cliente, Prisma } from '@prisma/client';
-import { EnderecosService } from 'src/enderecos/enderecos.service';
 import { ClienteComEnderecoDto } from './dto/clienteEndereco.dto';
 
 @Injectable()

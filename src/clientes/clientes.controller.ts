@@ -1,3 +1,4 @@
+import { PrismaService } from './../prisma/prisma.service';
 import {
   Controller,
   Get,
@@ -12,7 +13,6 @@ import {
 import { ClientesService } from './clientes.service';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { ClientesEntity } from './entities/cliente.entity';
 import { ClienteComEnderecoDto } from './dto/clienteEndereco.dto';
 

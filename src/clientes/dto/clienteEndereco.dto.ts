@@ -5,7 +5,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { IsCpfCnpj } from 'decoradores/cpfcnpj.decorador';
+import { IsCpfCnpj } from './../../../decoradores/cpfcnpj.decorador';
 
 export class ClienteComEnderecoDto {
   @IsEmail()

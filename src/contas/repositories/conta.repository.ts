@@ -1,5 +1,5 @@
+import { PrismaService } from './../../prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateContaDto } from '../dto/create-conta.dto';
 import { UpdateContaDto } from '../dto/update-conta.dto';
 import { ContaEntity } from '../entities/conta.entity';
