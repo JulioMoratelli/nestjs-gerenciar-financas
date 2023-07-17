@@ -3,6 +3,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateCreditoDto } from '../dto/create-credito.dto';
 import { UpdateCreditoDto } from '../dto/update-credito.dto';
 import { CreditoEntity } from '../entities/credito.entity';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class CreditoRepository {
@@ -24,9 +25,15 @@ export class CreditoRepository {
     }
   }
 
-  async create(createCreditoDto: CreateCreditoDto): Promise<CreditoEntity> {
-    return this.prisma.credito.create({
-      data: createCreditoDto,
+  async create(
+    cliente,
+    createCreditoDto: CreateCreditoDto,
+    trx: Prisma.TransactionClient,
+  ): Promise<CreditoEntity> {
+    const { contaId, valor } = createCreditoDto;
+
+    return trx.credito.create({
+      data: { clienteId: cliente, contaId, valor },
     });
   }
 
@@ -51,8 +58,9 @@ export class CreditoRepository {
     id: number,
     clienteId: number,
     updateCreditoDto: UpdateCreditoDto,
+    trx: Prisma.TransactionClient,
   ): Promise<CreditoEntity> {
-    return this.prisma.credito.update({
+    return trx.credito.update({
       where: {
         clienteId,
         id,
@@ -61,8 +69,12 @@ export class CreditoRepository {
     });
   }
 
-  remove(id: number, clienteId: number): Promise<CreditoEntity> {
-    return this.prisma.credito.delete({
+  remove(
+    id: number,
+    clienteId: number,
+    trx: Prisma.TransactionClient,
+  ): Promise<CreditoEntity> {
+    return trx.credito.delete({
       where: {
         clienteId,
         id,

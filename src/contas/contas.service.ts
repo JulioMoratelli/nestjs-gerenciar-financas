@@ -7,8 +7,8 @@ import { ContaRepository } from './repositories/conta.repository';
 export class ContasService {
   constructor(private readonly repository: ContaRepository) {}
 
-  create(createContaDto: CreateContaDto) {
-    return this.repository.create(createContaDto);
+  create(clienteId: number, createContaDto: CreateContaDto, trx) {
+    return this.repository.create(clienteId, createContaDto, trx);
   }
 
   findAll(clienteId: number) {
@@ -19,11 +19,11 @@ export class ContasService {
     return this.repository.findOne(clienteId, id);
   }
 
-  update(clienteId: number, id: number, updateContaDto: UpdateContaDto) {
-    return this.repository.update(clienteId, id, updateContaDto);
+  update(clienteId: number, id: number, updateContaDto: UpdateContaDto, trx) {
+    return this.repository.update(clienteId, id, updateContaDto, trx);
   }
 
-  remove(clienteId: number, id: number) {
-    return this.repository.remove(clienteId, id);
+  remove(clienteId: number, id: number, trx) {
+    return this.repository.remove(clienteId, id, trx);
   }
 }

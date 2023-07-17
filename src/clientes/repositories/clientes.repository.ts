@@ -1,29 +1,24 @@
 import { PrismaService } from './../../prisma/prisma.service';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { UpdateClienteDto } from '../dto/update-cliente.dto';
 import { Decimal } from '@prisma/client/runtime';
 import { Cliente, Prisma } from '@prisma/client';
+import { CreateClienteDto } from '../dto/create-cliente.dto';
 
 @Injectable()
 export class ClientesRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(
-    // createClienteDto: CreateClienteDto,
-    data: Prisma.ClienteUncheckedCreateInput,
+    createClienteDto: CreateClienteDto,
+    trx: Prisma.TransactionClient,
   ): Promise<Cliente> {
-    try {
-      return await this.prisma.$transaction(async (trx) => {
-        const cliente = trx.cliente.create({
-          data: {
-            ...data,
-          },
-        });
-        return cliente;
-      });
-    } catch (Error) {
-      throw new BadRequestException('dados invalidos');
-    }
+    const cliente = trx.cliente.create({
+      data: {
+        ...createClienteDto,
+      },
+    });
+    return cliente;
   }
 
   async findOne(id: number): Promise<Cliente> {
@@ -74,20 +69,15 @@ export class ClientesRepository {
   async update(
     id: number,
     updateClienteDto: UpdateClienteDto,
+    trx: Prisma.TransactionClient,
   ): Promise<Cliente> {
-    try {
-      return await this.prisma.$transaction(async (trx) => {
-        const cliente = trx.cliente.update({
-          where: {
-            id,
-          },
-          data: updateClienteDto,
-        });
-        return cliente;
-      });
-    } catch (Error) {
-      throw new Error('dados invalidos');
-    }
+    const cliente = trx.cliente.update({
+      where: {
+        id,
+      },
+      data: updateClienteDto,
+    });
+    return cliente;
   }
 
   async updateSaldoCliente(id: number, saldoAtual: Decimal): Promise<Cliente> {

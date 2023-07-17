@@ -19,10 +19,13 @@ export class ContasController {
     private prisma: PrismaService,
   ) {}
 
-  @Post()
-  async create(@Body() createContaDto: CreateContaDto) {
-    return await this.prisma.$transaction(async () => {
-      return this.contasService.create(createContaDto);
+  @Post(':clienteId')
+  async create(
+    @Param('clienteId') clienteId: number,
+    @Body() createContaDto: CreateContaDto,
+  ) {
+    return await this.prisma.$transaction(async (trx) => {
+      return this.contasService.create(clienteId, createContaDto, trx);
     });
   }
 
@@ -31,26 +34,26 @@ export class ContasController {
     return this.contasService.findAll(clienteId);
   }
 
-  @Get(':id')
+  @Get(':clienteId/:id')
   findOne(@Param('clienteId') clienteId: number, @Param('id') id: number) {
     return this.contasService.findOne(clienteId, +id);
   }
 
-  @Patch(':id')
+  @Patch(':clienteId/:id')
   async update(
     @Param('clienteId') clienteId: number,
     @Param('id') id: string,
     @Body() updateContaDto: UpdateContaDto,
   ) {
-    return await this.prisma.$transaction(async () => {
-      return this.contasService.update(clienteId, +id, updateContaDto);
+    return await this.prisma.$transaction(async (trx) => {
+      return this.contasService.update(clienteId, +id, updateContaDto, trx);
     });
   }
 
-  @Delete(':id')
+  @Delete(':clienteId/:id')
   async remove(@Param('clienteId') clienteId: number, @Param('id') id: string) {
-    return await this.prisma.$transaction(async () => {
-      return this.contasService.remove(clienteId, +id);
+    return await this.prisma.$transaction(async (trx) => {
+      return this.contasService.remove(clienteId, +id, trx);
     });
   }
 }

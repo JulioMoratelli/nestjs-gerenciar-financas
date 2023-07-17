@@ -14,20 +14,34 @@ export class CreditosService {
     private clienteService: ClientesService,
   ) {}
 
-  async create(createCreditoDto: CreateCreditoDto) {
-    const { contaId, clienteId } = createCreditoDto;
-    const novoCredito = await this.repository.create(createCreditoDto);
+  async atualizarSaldoDaConta(
+    clienteId: number,
+    contaId: number,
+    valor: Decimal,
+  ) {
     const conta = await this.contaRepository.findOne(clienteId, contaId);
 
     const saldoAtual = new Decimal(conta.saldo);
-    const novoSaldo = novoCredito.valor.plus(saldoAtual);
+    const novoSaldo = valor.plus(saldoAtual);
 
     // console.log(novoSaldo);
 
     await this.contaRepository.updateSaldoConta(contaId, novoSaldo);
     await this.clienteService.atualizarSaldoCliente(clienteId);
+  }
 
-    // console.log(novoCredito);
+  async create(clienteId: number, createCreditoDto: CreateCreditoDto, trx) {
+    const novoCredito = await this.repository.create(
+      clienteId,
+      createCreditoDto,
+      trx,
+    );
+
+    await this.atualizarSaldoDaConta(
+      clienteId,
+      createCreditoDto.contaId,
+      novoCredito.valor,
+    );
 
     return novoCredito;
   }
@@ -44,11 +58,12 @@ export class CreditosService {
     id: number,
     clienteId: number,
     updateCreditoDto: UpdateCreditoDto,
+    trx,
   ) {
-    return this.repository.update(id, clienteId, updateCreditoDto);
+    return this.repository.update(id, clienteId, updateCreditoDto, trx);
   }
 
-  async remove(clienteId: number, id: number) {
-    return this.repository.remove(clienteId, id);
+  async remove(clienteId: number, id: number, trx) {
+    return this.repository.remove(clienteId, id, trx);
   }
 }

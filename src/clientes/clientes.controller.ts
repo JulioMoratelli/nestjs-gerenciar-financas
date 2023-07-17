@@ -28,9 +28,12 @@ export class ClientesController {
     @Body() clienteComEnderecoDto: ClienteComEnderecoDto,
   ) {
     try {
-      return await this.clientesService.createClienteComEndereco(
-        clienteComEnderecoDto,
-      );
+      return await this.prisma.$transaction(async (trx) => {
+        return await this.clientesService.createClienteComEndereco(
+          clienteComEnderecoDto,
+          trx,
+        );
+      });
     } catch (err) {
       err.description = err.message;
       throw new BadRequestException(err);
@@ -57,8 +60,8 @@ export class ClientesController {
     @Param('id') id: string,
     @Body() updateClienteDto: UpdateClienteDto,
   ) {
-    return await this.prisma.$transaction(async () => {
-      const update = this.clientesService.update(+id, updateClienteDto);
+    return await this.prisma.$transaction(async (trx) => {
+      const update = this.clientesService.update(+id, updateClienteDto, trx);
       return update;
     });
   }

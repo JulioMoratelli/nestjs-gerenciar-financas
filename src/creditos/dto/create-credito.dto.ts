@@ -3,9 +3,6 @@ import { IsDecimal, IsNumber } from 'class-validator';
 
 export class CreateCreditoDto {
   @IsNumber()
-  clienteId: number;
-
-  @IsNumber()
   contaId: number;
 
   @IsDecimal()

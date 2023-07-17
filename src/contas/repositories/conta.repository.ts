@@ -4,6 +4,7 @@ import { CreateContaDto } from '../dto/create-conta.dto';
 import { UpdateContaDto } from '../dto/update-conta.dto';
 import { ContaEntity } from '../entities/conta.entity';
 import { Decimal } from '@prisma/client/runtime';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class ContaRepository {
@@ -26,9 +27,15 @@ export class ContaRepository {
   //   }
   // }
 
-  async create(createContaDto: CreateContaDto): Promise<ContaEntity> {
-    return this.prisma.conta.create({
-      data: createContaDto,
+  async create(
+    cliente: number,
+    createContaDto: CreateContaDto,
+    trx: Prisma.TransactionClient,
+  ): Promise<ContaEntity> {
+    const { nome } = createContaDto;
+
+    return trx.conta.create({
+      data: { clienteId: cliente, nome },
     });
   }
 
@@ -65,9 +72,10 @@ export class ContaRepository {
     clienteId: number,
     id: number,
     updateContaDto: UpdateContaDto,
+    trx: Prisma.TransactionClient,
   ): Promise<ContaEntity> {
     //await this.pertence(clienteId, id);
-    return await this.prisma.conta.update({
+    return await trx.conta.update({
       where: {
         clienteId,
         id,
@@ -76,9 +84,13 @@ export class ContaRepository {
     });
   }
 
-  async remove(clienteId: number, id: number): Promise<ContaEntity> {
+  async remove(
+    clienteId: number,
+    id: number,
+    trx: Prisma.TransactionClient,
+  ): Promise<ContaEntity> {
     //await this.pertence(clienteId, id);
-    return this.prisma.conta.delete({
+    return trx.conta.delete({
       where: {
         clienteId,
         id,

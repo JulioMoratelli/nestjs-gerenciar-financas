@@ -39,7 +39,10 @@ export class ClientesService {
     }
   }
 
-  async createClienteComEndereco(clienteComEnderecoDto: ClienteComEnderecoDto) {
+  async createClienteComEndereco(
+    clienteComEnderecoDto: ClienteComEnderecoDto,
+    trx,
+  ) {
     const { email, cpf, nome, sobrenome } = clienteComEnderecoDto;
     const dadosCreateCliente = { email, cpf, nome, sobrenome };
 
@@ -61,19 +64,37 @@ export class ClientesService {
     e tbm tá faltando a transécxon 😅
     */
 
-    if (clienteComEnderecoDto.rua) {
-      const cliente = await this.repository.create(dadosCreateCliente);
+    if (
+      clienteComEnderecoDto.rua ||
+      clienteComEnderecoDto.numero ||
+      clienteComEnderecoDto.bairro ||
+      clienteComEnderecoDto.cidade ||
+      clienteComEnderecoDto.cep ||
+      clienteComEnderecoDto.complemento
+    ) {
+      if (
+        !clienteComEnderecoDto.rua ||
+        !clienteComEnderecoDto.numero ||
+        !clienteComEnderecoDto.bairro ||
+        !clienteComEnderecoDto.cidade ||
+        !clienteComEnderecoDto.cep
+      ) {
+        throw new BadRequestException(
+          'Dados de endereço incompleto (rua, numero, bairro, cidade, cep)',
+        );
+      }
 
-      const clienteIndex = cliente.id;
+      const cliente = await this.repository.create(dadosCreateCliente, trx);
+
       const endereco = await this.enderecoService.createComCliente(
         clienteComEnderecoDto,
-        clienteIndex,
+        cliente.id,
       );
 
       return { cliente, endereco };
     }
 
-    const cliente = await this.repository.create(dadosCreateCliente);
+    const cliente = await this.repository.create(dadosCreateCliente, trx);
     return cliente;
   }
 
@@ -98,7 +119,7 @@ export class ClientesService {
       opcional "clienteId" e caso ele exista, validar só nos clientes que não sejam esse.
       o método opcional permitiria vc usar o método tanto pra novos clientes qto pra alteração de clientes.
   */
-  async update(id: number, updateClienteDto: UpdateClienteDto) {
+  async update(id: number, updateClienteDto: UpdateClienteDto, trx) {
     const cliente = await this.repository.findOne(id);
 
     if (!cliente) {
@@ -108,7 +129,7 @@ export class ClientesService {
     // cliente.dataAlterado = new Date(now());
     await this.validandoEmail(updateClienteDto.email);
 
-    return this.repository.update(id, updateClienteDto);
+    return this.repository.update(id, updateClienteDto, trx);
   }
 
   async remove(id: number, trx: Prisma.TransactionClient) {
