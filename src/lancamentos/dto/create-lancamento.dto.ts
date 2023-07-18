@@ -17,8 +17,4 @@ export class CreateLancamentoDto {
   @IsString()
   @IsNotEmpty()
   descricao: string;
-
-  @IsNumber()
-  @IsNotEmpty()
-  clienteId: number;
 }

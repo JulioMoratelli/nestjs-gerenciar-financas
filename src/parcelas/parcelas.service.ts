@@ -18,6 +18,7 @@ export class ParcelasService {
     lancamentoId: number,
     numeroParcela: number,
     valor: Decimal,
+    trx,
   ) {
     const valorParcela = Number(valor) / numeroParcela;
     const dataPrimeiraParcela = new Date();
@@ -31,9 +32,8 @@ export class ParcelasService {
         vencimento: vencimentoMensalidade,
         contaId: null,
         pago: false,
-        clienteId: clienteId,
       };
-      await this.repository.create(parcela);
+      await this.repository.create(clienteId, parcela, trx);
     }
   }
 
@@ -54,6 +54,7 @@ export class ParcelasService {
     lancamentoId: number,
     id: number,
     updateParcelaDto: UpdateParcelaDto,
+    trx,
   ) {
     const parcela = await this.repository.findOne(clienteId, id);
 
@@ -67,6 +68,7 @@ export class ParcelasService {
       lancamentoId,
       id,
       updateParcelaDto,
+      trx,
     );
 
     if (updateParcelaDto.pago === true) {

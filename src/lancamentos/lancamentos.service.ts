@@ -11,8 +11,16 @@ export class LancamentosService {
     private parcela: ParcelasService,
   ) {}
 
-  async create(createLancamentoDto: CreateLancamentoDto) {
-    const lancamento = await this.repository.create(createLancamentoDto);
+  async create(
+    clienteId: number,
+    createLancamentoDto: CreateLancamentoDto,
+    trx,
+  ) {
+    const lancamento = await this.repository.create(
+      clienteId,
+      createLancamentoDto,
+      trx,
+    );
 
     if (lancamento) {
       const { id, numeroParcelas, valorTotal, clienteId } = lancamento;
@@ -22,6 +30,7 @@ export class LancamentosService {
         id,
         numeroParcelas,
         valorTotal,
+        trx,
       );
     }
 
@@ -42,11 +51,12 @@ export class LancamentosService {
     clienteId: number,
     id: number,
     updateLancamentoDto: UpdateLancamentoDto,
+    trx,
   ) {
-    return this.repository.update(clienteId, id, updateLancamentoDto);
+    return this.repository.update(clienteId, id, updateLancamentoDto, trx);
   }
 
-  remove(clienteId: number, id: number) {
-    return this.repository.remove(clienteId, id);
+  remove(clienteId: number, id: number, trx) {
+    return this.repository.remove(clienteId, id, trx);
   }
 }

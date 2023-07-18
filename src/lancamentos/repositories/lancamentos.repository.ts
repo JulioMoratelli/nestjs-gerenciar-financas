@@ -3,16 +3,19 @@ import { Injectable } from '@nestjs/common';
 import { CreateLancamentoDto } from '../dto/create-lancamento.dto';
 import { UpdateLancamentoDto } from '../dto/update-lancamento.dto';
 import { LancamentoEntity } from '../entities/lancamento.entity';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class LancamentosRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(
+    cliente: number,
     createLancamentoDto: CreateLancamentoDto,
+    trx: Prisma.TransactionClient,
   ): Promise<LancamentoEntity> {
-    return this.prisma.lancamento.create({
-      data: createLancamentoDto,
+    return trx.lancamento.create({
+      data: { clienteId: cliente, ...createLancamentoDto },
     });
   }
 
@@ -37,8 +40,9 @@ export class LancamentosRepository {
     clienteId: number,
     id: number,
     updateLancamentoDto: UpdateLancamentoDto,
+    trx: Prisma.TransactionClient,
   ) {
-    return this.prisma.lancamento.update({
+    return trx.lancamento.update({
       where: {
         clienteId,
         id,
@@ -47,8 +51,8 @@ export class LancamentosRepository {
     });
   }
 
-  remove(clienteId: number, id: number) {
-    return this.prisma.lancamento.delete({
+  remove(clienteId: number, id: number, trx: Prisma.TransactionClient) {
+    return trx.lancamento.delete({
       where: {
         clienteId,
         id,

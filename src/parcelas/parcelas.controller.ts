@@ -27,12 +27,13 @@ export class ParcelasController {
     @Param('id') id: string,
     @Body() updateParcelaDto: UpdateParcelaDto,
   ) {
-    return await this.prisma.$transaction(async () => {
+    return await this.prisma.$transaction(async (trx) => {
       return this.parcelasService.update(
         clienteId,
         lancamentoId,
         +id,
         updateParcelaDto,
+        trx,
       );
     });
   }

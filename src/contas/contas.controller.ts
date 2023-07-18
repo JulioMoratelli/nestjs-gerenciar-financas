@@ -12,6 +12,7 @@ import { CreateContaDto } from './dto/create-conta.dto';
 import { UpdateContaDto } from './dto/update-conta.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 
+// @ApiHeader()
 @Controller('contas')
 export class ContasController {
   constructor(
@@ -57,3 +58,10 @@ export class ContasController {
     });
   }
 }
+
+// function ApiHeader(
+//   clienteId: number,
+//   id: number,
+// ): (target: typeof ContasController) => void | typeof ContasController {
+//   throw new Error('Function not implemented.');
+// }

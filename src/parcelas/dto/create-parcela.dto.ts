@@ -10,10 +10,6 @@ import {
 export class CreateParcelaDto {
   @IsNumber()
   @IsNotEmpty()
-  clienteId: number;
-
-  @IsNumber()
-  @IsNotEmpty()
   lancamentoId: number;
 
   @IsNumber()

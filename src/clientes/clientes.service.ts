@@ -87,8 +87,9 @@ export class ClientesService {
       const cliente = await this.repository.create(dadosCreateCliente, trx);
 
       const endereco = await this.enderecoService.createComCliente(
-        clienteComEnderecoDto,
         cliente.id,
+        clienteComEnderecoDto,
+        trx,
       );
 
       return { cliente, endereco };
@@ -127,7 +128,9 @@ export class ClientesService {
     }
 
     // cliente.dataAlterado = new Date(now());
-    await this.validandoEmail(updateClienteDto.email);
+    if (cliente.email !== updateClienteDto.email) {
+      await this.validandoEmail(updateClienteDto.email);
+    }
 
     return this.repository.update(id, updateClienteDto, trx);
   }

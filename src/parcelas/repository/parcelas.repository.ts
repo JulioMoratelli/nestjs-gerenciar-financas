@@ -3,14 +3,19 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateParcelaDto } from '../dto/create-parcela.dto';
 import { ParcelaEntity } from '../entities/parcela.entity';
 import { UpdateParcelaDto } from '../dto/update-parcela.dto';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class ParcelasRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(createParcelaDto: CreateParcelaDto): Promise<ParcelaEntity> {
-    return this.prisma.parcela.create({
-      data: createParcelaDto,
+  async create(
+    cliente: number,
+    createParcelaDto: CreateParcelaDto,
+    trx: Prisma.TransactionClient,
+  ): Promise<ParcelaEntity> {
+    return trx.parcela.create({
+      data: { clienteId: cliente, ...createParcelaDto },
     });
   }
 
@@ -44,8 +49,9 @@ export class ParcelasRepository {
     lancamentoId: number,
     id: number,
     updateParcelaDto: UpdateParcelaDto,
+    trx: Prisma.TransactionClient,
   ): Promise<ParcelaEntity> {
-    return this.prisma.parcela.update({
+    return trx.parcela.update({
       where: {
         clienteId,
         lancamentoId,
