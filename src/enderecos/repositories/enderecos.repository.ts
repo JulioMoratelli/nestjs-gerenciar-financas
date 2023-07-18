@@ -9,9 +9,18 @@ import { Prisma } from '@prisma/client';
 export class EnderecosRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(createEnderecoDto: CreateEnderecoDto): Promise<EnderecoEntity> {
-    return this.prisma.endereco.create({
-      data: createEnderecoDto,
+  async create(
+    cliente: number,
+    createEnderecoDto: CreateEnderecoDto,
+    trx: Prisma.TransactionClient,
+  ): Promise<EnderecoEntity> {
+    const enderecoCreateInput: Prisma.EnderecoCreateInput = {
+      ...createEnderecoDto,
+      cliente: { connect: { id: cliente } },
+    };
+
+    return trx.endereco.create({
+      data: enderecoCreateInput,
     });
   }
 
@@ -33,47 +42,51 @@ export class EnderecosRepository {
   }
 
   async update(
+    cliente: number,
     id: number,
     updateEnderecoDto: UpdateEnderecoDto,
+    trx: Prisma.TransactionClient,
   ): Promise<EnderecoEntity> {
-    const { clienteId } = updateEnderecoDto;
+    // if (!clienteId) {
+    //   throw new Error('Cliente não existe');
+    // }
 
-    if (!clienteId) {
-      throw new Error('Cliente não existe');
-    }
+    // delete updateEnderecoDto.clienteId;
 
-    delete updateEnderecoDto.clienteId;
+    // const cliente = await this.prisma.cliente.findUnique({
+    //   where: {
+    //     id: clienteId,
+    //   },
+    // });
 
-    const cliente = await this.prisma.cliente.findUnique({
-      where: {
-        id: clienteId,
-      },
-    });
-
-    if (!cliente) {
-      throw new Error('Cliente não existe');
-    }
+    // if (!cliente) {
+    //   throw new Error('Cliente não existe');
+    // }
 
     const data: Prisma.EnderecoUpdateInput = {
       ...updateEnderecoDto,
       cliente: {
         connect: {
-          id: clienteId,
+          id,
         },
       },
     };
 
-    return this.prisma.endereco.update({
+    return trx.endereco.update({
       where: {
-        clienteId,
+        clienteId: cliente,
         id,
       },
       data,
     });
   }
 
-  remove(clienteId: number, id: number): Promise<EnderecoEntity> {
-    return this.prisma.endereco.delete({
+  remove(
+    clienteId: number,
+    id: number,
+    trx: Prisma.TransactionClient,
+  ): Promise<EnderecoEntity> {
+    return trx.endereco.delete({
       where: {
         clienteId,
         id,

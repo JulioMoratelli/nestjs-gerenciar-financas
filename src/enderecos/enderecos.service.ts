@@ -8,13 +8,14 @@ import { EnderecosRepository } from './repositories/enderecos.repository';
 export class EnderecosService {
   constructor(private readonly repository: EnderecosRepository) {}
 
-  create(createEnderecoDto: CreateEnderecoDto) {
-    return this.repository.create(createEnderecoDto);
+  create(clienteId: number, createEnderecoDto: CreateEnderecoDto, trx) {
+    return this.repository.create(clienteId, createEnderecoDto, trx);
   }
 
   createComCliente(
-    clienteComEnderecoDto: ClienteComEnderecoDto,
     clienteIndex: number,
+    clienteComEnderecoDto: ClienteComEnderecoDto,
+    trx,
   ) {
     const { cep, rua, numero, bairro, complemento, cidade } =
       clienteComEnderecoDto;
@@ -26,10 +27,9 @@ export class EnderecosService {
       bairro,
       complemento,
       cidade,
-      clienteId: clienteIndex,
       padrao: true,
     };
-    return this.repository.create(dadosCreateEndereco);
+    return this.repository.create(clienteIndex, dadosCreateEndereco, trx);
   }
 
   findAll(clienteId: number) {
@@ -40,11 +40,16 @@ export class EnderecosService {
     return this.repository.findOne(clienteId, id);
   }
 
-  update(id: number, updateEnderecoDto: UpdateEnderecoDto) {
-    return this.repository.update(id, updateEnderecoDto);
+  update(
+    clienteId: number,
+    id: number,
+    updateEnderecoDto: UpdateEnderecoDto,
+    trx,
+  ) {
+    return this.repository.update(clienteId, id, updateEnderecoDto, trx);
   }
 
-  remove(clienteId: number, id: number) {
-    return this.repository.remove(clienteId, id);
+  remove(clienteId: number, id: number, trx) {
+    return this.repository.remove(clienteId, id, trx);
   }
 }

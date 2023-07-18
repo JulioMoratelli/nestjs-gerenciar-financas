@@ -7,9 +7,6 @@ import {
 } from 'class-validator';
 
 export class CreateEnderecoDto {
-  @IsNumber()
-  clienteId: number;
-
   @IsBoolean()
   @IsNotEmpty()
   padrao: boolean;

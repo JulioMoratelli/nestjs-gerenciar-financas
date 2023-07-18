@@ -10,7 +10,6 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { ClientesService } from './clientes.service';
-import { CreateClienteDto } from './dto/create-cliente.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
 import { ClientesEntity } from './entities/cliente.entity';
 import { ClienteComEnderecoDto } from './dto/clienteEndereco.dto';

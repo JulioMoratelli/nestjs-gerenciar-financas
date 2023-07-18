@@ -21,25 +21,26 @@ export class EnderecosController {
     private prisma: PrismaService,
   ) {}
 
-  @Post()
+  @Post(':clienteId')
   async create(
-    @Body()
+    @Param('clienteId') clienteId: number,
     createEnderecoDto: CreateEnderecoDto,
   ) {
-    return await this.prisma.$transaction(async () => {
-      return this.enderecosService.create(createEnderecoDto);
+    return await this.prisma.$transaction(async (trx) => {
+      return this.enderecosService.create(clienteId, createEnderecoDto, trx);
     });
   }
 
-  @Post()
+  @Post(':clienteId')
   async createComEndereco(
-    @Body() clienteId: number,
+    @Param('clienteId') clienteId: number,
     clienteComEnderecoDto: ClienteComEnderecoDto,
   ) {
-    return await this.prisma.$transaction(async () => {
+    return await this.prisma.$transaction(async (trx) => {
       return this.enderecosService.createComCliente(
-        clienteComEnderecoDto,
         clienteId,
+        clienteComEnderecoDto,
+        trx,
       );
     });
   }
@@ -57,14 +58,20 @@ export class EnderecosController {
     return this.enderecosService.findOne(clienteId, +id);
   }
 
-  @Patch(':id')
+  @Patch(':clienteId/:id')
   async update(
+    @Param('clienteId') clienteId: number,
     @Param('id') id: string,
     @Body() updateEnderecoDto: UpdateEnderecoDto,
   ) {
     try {
-      return await this.prisma.$transaction(async () => {
-        return this.enderecosService.update(+id, updateEnderecoDto);
+      return await this.prisma.$transaction(async (trx) => {
+        return this.enderecosService.update(
+          clienteId,
+          +id,
+          updateEnderecoDto,
+          trx,
+        );
       });
     } catch (err) {}
   }
@@ -72,8 +79,8 @@ export class EnderecosController {
   @Delete(':id')
   async remove(@Param('clienteId') clienteId: number, @Param('id') id: string) {
     try {
-      return await this.prisma.$transaction(async () => {
-        return this.enderecosService.remove(clienteId, +id);
+      return await this.prisma.$transaction(async (trx) => {
+        return this.enderecosService.remove(clienteId, +id, trx);
       });
     } catch (err) {}
   }

@@ -9,21 +9,21 @@ import { Prisma } from '@prisma/client';
 export class CreditoRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  private async pertence(clienteId: number, id: number): Promise<void> {
-    const verificandoExistencia = await this.prisma.credito.findFirst({
-      where: {
-        clienteId,
-        id,
-      },
-    });
+  // private async pertence(clienteId: number, id: number): Promise<void> {
+  //   const verificandoExistencia = await this.prisma.credito.findFirst({
+  //     where: {
+  //       clienteId,
+  //       id,
+  //     },
+  //   });
 
-    if (
-      !verificandoExistencia ||
-      verificandoExistencia.clienteId !== clienteId
-    ) {
-      throw new Error('O crédito não existe ou não pertence ao clienteId');
-    }
-  }
+  //   if (
+  //     !verificandoExistencia ||
+  //     verificandoExistencia.clienteId !== clienteId
+  //   ) {
+  //     throw new Error('O crédito não existe ou não pertence ao clienteId');
+  //   }
+  // }
 
   async create(
     cliente,
