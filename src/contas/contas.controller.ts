@@ -1,3 +1,4 @@
+import { Request } from 'express';
 import {
   Controller,
   Get,
@@ -6,6 +7,8 @@ import {
   Patch,
   Param,
   Delete,
+  Header,
+  RequestMapping,
 } from '@nestjs/common';
 import { ContasService } from './contas.service';
 import { CreateContaDto } from './dto/create-conta.dto';
@@ -19,11 +22,8 @@ export class ContasController {
     private prisma: PrismaService,
   ) {}
 
-  @Post(':clienteId')
-  async create(
-    @Param('clienteId') clienteId: number,
-    @Body() createContaDto: CreateContaDto,
-  ) {
+  @Post()
+  async create(clienteId: number, @Body() createContaDto: CreateContaDto) {
     return await this.prisma.$transaction(async (trx) => {
       return this.contasService.create(clienteId, createContaDto, trx);
     });

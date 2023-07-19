@@ -51,7 +51,7 @@ model Endereco{
 model Conta{
   id          Int @id @default(autoincrement())
   clienteId   Int 
-  nome        String @unique
+  nome        String 
   saldo       Decimal @default(0)
   dataCriado  DateTime @default(now())
   dataAlterado DateTime @default(now())
