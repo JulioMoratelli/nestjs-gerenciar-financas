@@ -1,16 +1,18 @@
 import { ContaRepository } from './../contas/repositories/conta.repository';
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateParcelaDto } from './dto/create-parcela.dto';
 import { UpdateParcelaDto } from './dto/update-parcela.dto';
 import { ParcelasRepository } from './repository/parcelas.repository';
 import { Decimal } from '@prisma/client/runtime';
 import { addDays } from 'date-fns';
+import { ClientesRepository } from 'src/clientes/repositories/clientes.repository';
 
 @Injectable()
 export class ParcelasService {
   constructor(
     private readonly repository: ParcelasRepository,
     private contaRepository: ContaRepository,
+    private clienteRepository: ClientesRepository,
   ) {}
 
   async createParcelasComLancamento(
@@ -42,10 +44,22 @@ export class ParcelasService {
     periodo?: { deData: Date; ateData: Date },
     status?: boolean,
   ) {
+    const cliente = await this.clienteRepository.findOne(clienteId);
+
+    if (!cliente) {
+      throw new BadRequestException('Esse cliente não existe');
+    }
+
     return this.repository.findAll(clienteId, periodo, status);
   }
 
   async findOne(clienteId: number, id: number) {
+    const cliente = await this.clienteRepository.findOne(clienteId);
+
+    if (!cliente) {
+      throw new BadRequestException('Esse cliente não existe');
+    }
+
     return this.repository.findOne(clienteId, id);
   }
 
@@ -57,6 +71,10 @@ export class ParcelasService {
     trx,
   ) {
     const parcela = await this.repository.findOne(clienteId, id);
+
+    if (!parcela) {
+      throw new BadRequestException('Parcela não encontrada');
+    }
 
     if (parcela.pago) {
       throw new Error('não é possivel alterar uma parcela paga');
@@ -91,22 +109,20 @@ export class ParcelasService {
   async IdentificandoPagamento(clienteId: number, id: number, contaId: number) {
     const parcela = await this.repository.findOne(clienteId, id);
     const conta = await this.contaRepository.findOne(clienteId, contaId);
-    const novoSaldo = Number(conta.saldo) - Number(parcela.valor);
-    console.log(parcela);
-    console.log(conta);
-    console.log(novoSaldo);
 
-    if (parcela.pago) {
-      throw new Error('');
-    }
+    // console.log(parcela);
+    // console.log(conta);
+    // console.log(novoSaldo);
 
     if (!parcela) {
-      throw new Error('Parcela não existe');
+      throw new BadRequestException('Parcela não existe');
     } else if (parcela.pago) {
-      throw new Error('Parcela já foi paga');
+      throw new BadRequestException('Parcela já foi paga');
     } else if (!conta) {
-      throw new Error('Conta não existe');
+      throw new BadRequestException('Conta não existe');
     }
+
+    const novoSaldo = Number(conta.saldo) - Number(parcela.valor);
 
     await this.contaRepository.updateSaldoConta(
       contaId,
@@ -116,19 +132,28 @@ export class ParcelasService {
 
   async identificarReversao(clienteId: number, id: number) {
     const parcela = await this.repository.findOne(clienteId, id);
+
+    if (!parcela) {
+      throw new BadRequestException('Parcela não existe');
+    }
+
+    if (!parcela.pago) {
+      throw new BadRequestException('Essa parcela não esta paga');
+    }
+    if (!parcela.contaId) {
+      throw new BadRequestException('Não foi informado uma conta');
+    }
+
     const conta = await this.contaRepository.findOne(
       clienteId,
       parcela.contaId,
     );
-    const novoSaldo = Number(conta.saldo) + Number(parcela.valor);
 
-    if (!parcela.pago) {
-      throw new Error('essa parcela não esta paga');
-    } else if (!parcela.contaId) {
-      throw new Error('parcela não possui uma conta associada');
-    } else if (!conta) {
-      throw new Error('conta não existe');
+    if (!conta) {
+      throw new BadRequestException('conta não existe');
     }
+
+    const novoSaldo = Number(conta.saldo) + Number(parcela.valor);
 
     await this.contaRepository.updateSaldoConta(
       parcela.clienteId,

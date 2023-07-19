@@ -5,6 +5,7 @@ import { CreditoRepository } from './repositories/credito.repository';
 import { ContaRepository } from 'src/contas/repositories/conta.repository';
 import { Decimal } from '@prisma/client/runtime';
 import { ClientesService } from 'src/clientes/clientes.service';
+import { BadRequestException } from '@nestjs/common';
 
 @Injectable()
 export class CreditosService {
@@ -13,6 +14,23 @@ export class CreditosService {
     private contaRepository: ContaRepository,
     private clienteService: ClientesService,
   ) {}
+
+  async validate(clienteId: number, id: number) {
+    const cliente = await this.clienteService.findOne(clienteId);
+
+    if (!cliente) {
+      throw new BadRequestException('Esse cliente não existe');
+    }
+
+    const conta = await this.repository.findOne(clienteId, id);
+    if (!conta) {
+      throw new BadRequestException('Cédito não encontrado');
+    }
+
+    if (conta.clienteId !== clienteId) {
+      throw new BadRequestException('Crédito não encontrado');
+    }
+  }
 
   async atualizarSaldoDaConta(
     clienteId: number,
@@ -31,6 +49,12 @@ export class CreditosService {
   }
 
   async create(clienteId: number, createCreditoDto: CreateCreditoDto, trx) {
+    const cliente = await this.clienteService.findOne(clienteId);
+
+    if (!cliente) {
+      throw new BadRequestException('Esse cliente não existe');
+    }
+
     const novoCredito = await this.repository.create(
       clienteId,
       createCreditoDto,
@@ -47,11 +71,19 @@ export class CreditosService {
   }
 
   async findAll(clienteId: number) {
+    const cliente = await this.clienteService.findOne(clienteId);
+
+    if (!cliente) {
+      throw new BadRequestException('Esse cliente não existe');
+    }
+
     return this.repository.findAll(clienteId);
   }
 
-  async findOne(clineteId: number, id: number) {
-    return this.repository.findOne(id, clineteId);
+  async findOne(clienteId: number, id: number) {
+    await this.validate(clienteId, id);
+
+    return this.repository.findOne(id, clienteId);
   }
 
   async update(
@@ -60,10 +92,14 @@ export class CreditosService {
     updateCreditoDto: UpdateCreditoDto,
     trx,
   ) {
+    await this.validate(clienteId, id);
+
     return this.repository.update(id, clienteId, updateCreditoDto, trx);
   }
 
   async remove(clienteId: number, id: number, trx) {
+    await this.validate(clienteId, id);
+
     return this.repository.remove(clienteId, id, trx);
   }
 }

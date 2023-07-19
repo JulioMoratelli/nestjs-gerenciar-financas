@@ -1,15 +1,54 @@
 import { CreateEnderecoDto } from 'src/enderecos/dto/create-endereco.dto';
 import { ClienteComEnderecoDto } from './../clientes/dto/clienteEndereco.dto';
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { UpdateEnderecoDto } from './dto/update-endereco.dto';
 import { EnderecosRepository } from './repositories/enderecos.repository';
+import { ClientesRepository } from 'src/clientes/repositories/clientes.repository';
 
 @Injectable()
 export class EnderecosService {
-  constructor(private readonly repository: EnderecosRepository) {}
+  constructor(
+    private readonly repository: EnderecosRepository,
+    private clienteRepository: ClientesRepository,
+  ) {}
 
-  create(clienteId: number, createEnderecoDto: CreateEnderecoDto, trx) {
-    return this.repository.create(clienteId, createEnderecoDto, trx);
+  async validate(clienteId: number, id: number) {
+    const cliente = await this.clienteRepository.findOne(clienteId);
+
+    if (!cliente) {
+      throw new BadRequestException('Esse cliente não existe');
+    }
+
+    const conta = await this.repository.findOne(clienteId, id);
+    if (!conta) {
+      throw new BadRequestException('Endereço não encontrado');
+    }
+
+    if (conta.clienteId !== clienteId) {
+      throw new BadRequestException('Endereço não encontrado');
+    }
+  }
+
+  async create(clienteId: number, createEnderecoDto: CreateEnderecoDto, trx) {
+    const cliente = await this.clienteRepository.findOne(clienteId);
+
+    if (!cliente) {
+      throw new BadRequestException('Esse cliente não existe');
+    }
+
+    const endereco = await this.repository.create(
+      clienteId,
+      createEnderecoDto,
+      trx,
+    );
+
+    const enderecos = await this.repository.findAll(clienteId);
+    const enderecoPadrao = enderecos.some((endereco) => endereco.padrao);
+    if (createEnderecoDto.padrao && enderecoPadrao) {
+      throw new BadRequestException('O cliente já possui um endereço padrão');
+    }
+
+    return endereco;
   }
 
   createComCliente(
@@ -32,24 +71,34 @@ export class EnderecosService {
     return this.repository.create(clienteIndex, dadosCreateEndereco, trx);
   }
 
-  findAll(clienteId: number) {
+  async findAll(clienteId: number) {
     return this.repository.findAll(clienteId);
   }
 
-  findOne(clienteId: number, id: number) {
+  async findOne(clienteId: number, id: number) {
+    await this.validate(clienteId, id);
     return this.repository.findOne(clienteId, id);
   }
 
-  update(
+  async update(
     clienteId: number,
     id: number,
     updateEnderecoDto: UpdateEnderecoDto,
     trx,
   ) {
+    await this.validate(clienteId, id);
+
+    const enderecos = await this.repository.findAll(clienteId);
+    const enderecoPadrao = enderecos.some((endereco) => endereco.padrao);
+    if (updateEnderecoDto.padrao && enderecoPadrao) {
+      throw new BadRequestException('O cliente já possui um endereço padrão');
+    }
+
     return this.repository.update(clienteId, id, updateEnderecoDto, trx);
   }
 
-  remove(clienteId: number, id: number, trx) {
+  async remove(clienteId: number, id: number, trx) {
+    await this.validate(clienteId, id);
     return this.repository.remove(clienteId, id, trx);
   }
 }

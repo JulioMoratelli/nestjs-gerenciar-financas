@@ -1,29 +1,95 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateContaDto } from './dto/create-conta.dto';
 import { UpdateContaDto } from './dto/update-conta.dto';
 import { ContaRepository } from './repositories/conta.repository';
+import { ClientesRepository } from 'src/clientes/repositories/clientes.repository';
 
 @Injectable()
 export class ContasService {
-  constructor(private readonly repository: ContaRepository) {}
+  constructor(
+    private readonly repository: ContaRepository,
+    private clienteRepository: ClientesRepository,
+  ) {}
 
-  create(clienteId: number, createContaDto: CreateContaDto, trx) {
+  async validate(clienteId: number, id: number) {
+    const cliente = await this.clienteRepository.findOne(clienteId);
+
+    if (!cliente) {
+      throw new BadRequestException('Esse cliente não existe');
+    }
+
+    const conta = await this.repository.findOne(clienteId, id);
+    if (!conta) {
+      throw new BadRequestException('Conta não encontrada.');
+    }
+
+    if (conta.clienteId !== clienteId) {
+      throw new BadRequestException('Conta não encontrada.');
+    }
+  }
+
+  async create(clienteId: number, createContaDto: CreateContaDto, trx) {
+    const cliente = await this.clienteRepository.findOne(clienteId);
+
+    if (!cliente) {
+      throw new BadRequestException('Esse cliente não existe');
+    }
+
+    const contas = await this.repository.findAll(clienteId);
+
+    const nomeContaJaExistente = contas.some(
+      (conta) => conta.nome === createContaDto.nome,
+    );
+    if (nomeContaJaExistente) {
+      throw new BadRequestException(
+        'Já existe uma conta cadastrada com esse nome',
+      );
+    }
+
     return this.repository.create(clienteId, createContaDto, trx);
   }
 
-  findAll(clienteId: number) {
+  async findAll(clienteId: number) {
+    const cliente = await this.clienteRepository.findOne(clienteId);
+
+    if (!cliente) {
+      throw new BadRequestException('Esse cliente não existe');
+    }
+
     return this.repository.findAll(clienteId);
   }
 
-  findOne(clienteId: number, id: number) {
+  async findOne(clienteId: number, id: number) {
+    await this.validate(clienteId, id);
+
     return this.repository.findOne(clienteId, id);
   }
 
-  update(clienteId: number, id: number, updateContaDto: UpdateContaDto, trx) {
+  async update(
+    clienteId: number,
+    id: number,
+    updateContaDto: UpdateContaDto,
+    trx,
+  ) {
+    await this.validate(clienteId, id);
+
+    const contas = await this.repository.findAll(clienteId);
+
+    const nomeContaJaExistente = contas.some(
+      (conta) => conta.nome === updateContaDto.nome,
+    );
+    if (nomeContaJaExistente) {
+      throw new BadRequestException(
+        'Já existe uma conta cadastrada com esse nome',
+      );
+    }
+
     return this.repository.update(clienteId, id, updateContaDto, trx);
   }
 
-  remove(clienteId: number, id: number, trx) {
+  async remove(clienteId: number, id: number, trx) {
+    await this.validate(clienteId, id);
+
     return this.repository.remove(clienteId, id, trx);
   }
 }

@@ -1,12 +1,13 @@
+import { ClientesRepository } from './../clientes/repositories/clientes.repository';
+import { ContaRepository } from './../contas/repositories/conta.repository';
+import { ContaEntity } from './../contas/entities/conta.entity';
+import { ParcelasService } from 'src/parcelas/parcelas.service';
+import { ParcelasRepository } from './../parcelas/repository/parcelas.repository';
 import { Module } from '@nestjs/common';
 import { LancamentosService } from './lancamentos.service';
 import { LancamentosController } from './lancamentos.controller';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { LancamentosRepository } from './repositories/lancamentos.repository';
-import { ParcelasRepository } from 'src/parcelas/repository/parcelas.repository';
-import { ParcelasService } from 'src/parcelas/parcelas.service';
-import { ContaEntity } from 'src/contas/entities/conta.entity';
-import { ContaRepository } from 'src/contas/repositories/conta.repository';
 
 @Module({
   controllers: [LancamentosController],
@@ -18,6 +19,7 @@ import { ContaRepository } from 'src/contas/repositories/conta.repository';
     ParcelasService,
     ContaEntity,
     ContaRepository,
+    ClientesRepository,
   ],
 })
 export class LancamentosModule {}
