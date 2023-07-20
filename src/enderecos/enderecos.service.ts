@@ -44,6 +44,10 @@ export class EnderecosService {
 
     const enderecos = await this.repository.findAll(clienteId);
     const enderecoPadrao = enderecos.some((endereco) => endereco.padrao);
+
+    // no caso, aqui ele PODE cadastrar outro email como padrão.
+    // precisa verificar e fazer o que tiver que fazer se tiver que fazer alguma coisa
+
     if (createEnderecoDto.padrao && enderecoPadrao) {
       throw new BadRequestException('O cliente já possui um endereço padrão');
     }
@@ -90,6 +94,10 @@ export class EnderecosService {
 
     const enderecos = await this.repository.findAll(clienteId);
     const enderecoPadrao = enderecos.some((endereco) => endereco.padrao);
+
+    // aqui tbm - ele PODE setar outro endereço como padrão
+    // novamente, precisa verificar e fazer o que tiver que fazer...
+
     if (updateEnderecoDto.padrao && enderecoPadrao) {
       throw new BadRequestException('O cliente já possui um endereço padrão');
     }

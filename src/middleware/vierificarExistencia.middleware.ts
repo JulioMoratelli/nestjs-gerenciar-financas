@@ -16,7 +16,7 @@ export class ValidandoExistenciaCliente implements NestMiddleware {
     const clienteId = req.header('clienteId');
 
     if (!clienteId) {
-      return res.status(403).json({ error: 'Cliente não encontrado' });
+      return res.status(403).json({ error: 'Cliente não informado' });
     }
 
     try {

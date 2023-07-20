@@ -27,6 +27,7 @@ export class ContasService {
       throw new BadRequestException('Conta não encontrada.');
     }
 
+    // essa verificação não precisa pq já faz na verificação acima
     if (conta.clienteId !== clienteId) {
       throw new BadRequestException('Conta não encontrada.');
     }

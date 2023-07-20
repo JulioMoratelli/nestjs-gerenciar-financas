@@ -101,5 +101,7 @@ export class CreditosService {
     await this.validate(clienteId, id);
 
     return this.repository.remove(clienteId, id, trx);
+
+    //e o crédito que já entrou na conta? precisa fazer a engenharia reversa
   }
 }

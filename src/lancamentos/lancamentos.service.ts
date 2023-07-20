@@ -48,6 +48,7 @@ export class LancamentosService {
       trx,
     );
 
+    // aqui não precisaria desse if pq nesse ponto o lançamento TEM que ter sido criado
     if (lancamento) {
       const { id, numeroParcelas, valorTotal, clienteId } = lancamento;
 
@@ -96,5 +97,7 @@ export class LancamentosService {
     await this.validate(clienteId, id);
 
     return this.repository.remove(clienteId, id, trx);
+
+    // e as parcelas? e as parcelas pagas? precisa verificar e fazer a engenharia reversa
   }
 }

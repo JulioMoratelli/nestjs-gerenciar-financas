@@ -23,6 +23,7 @@ export class ParcelasService {
     trx,
   ) {
     const valorParcela = Number(valor) / numeroParcela;
+    // faltou pegar a data informada como primeira parcela no lançamento
     const dataPrimeiraParcela = new Date();
 
     for (let i = 1; i <= numeroParcela; i++) {
@@ -49,6 +50,8 @@ export class ParcelasService {
     if (!cliente) {
       throw new BadRequestException('Esse cliente não existe');
     }
+
+    // faltou validar se caso informado o período existam as duas datas
 
     return this.repository.findAll(clienteId, periodo, status);
   }
@@ -89,6 +92,9 @@ export class ParcelasService {
       trx,
     );
 
+    // a regra de pagar/despagar uma parcela não deve ser feita no update da parcela,
+    // e sim apenas nos métodos exclusivos pra isso
+
     if (updateParcelaDto.pago === true) {
       await this.IdentificandoPagamento(
         clienteId,
@@ -128,6 +134,8 @@ export class ParcelasService {
       contaId,
       new Decimal(novoSaldo),
     );
+
+    // faltou mudar a parcela & lançamento
   }
 
   async identificarReversao(clienteId: number, id: number) {
@@ -140,6 +148,9 @@ export class ParcelasService {
     if (!parcela.pago) {
       throw new BadRequestException('Essa parcela não esta paga');
     }
+
+    // esse if não precisaria ser feito pq teoricamente se a parcela tem uma conta_id e não está
+    // paga, algo mto errado já aconteceu antes 😅
     if (!parcela.contaId) {
       throw new BadRequestException('Não foi informado uma conta');
     }
@@ -159,5 +170,7 @@ export class ParcelasService {
       parcela.clienteId,
       new Decimal(novoSaldo),
     );
+
+    // faltou mudar a parcela & lançamento
   }
 }

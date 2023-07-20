@@ -33,8 +33,13 @@ export class ClientesService {
     const clientes = await this.repository.findAllComEndereco();
 
     for (const cliente of clientes) {
-      if (cliente.email === email && cliente.id !== clienteId) {
-        throw new BadRequestException('Esse email já está cadastrado');
+      // if (cliente.email === email && cliente.id !== clienteId) {
+
+      // verificar se o clienteId foi informado
+      if (cliente.email === email) {
+        if (!clienteId || cliente.id !== clienteId) {
+          throw new BadRequestException('Esse email já está cadastrado');
+        }
       }
     }
   }
@@ -128,8 +133,12 @@ export class ClientesService {
     }
 
     // cliente.dataAlterado = new Date(now());
-    if (cliente.email !== updateClienteDto.email) {
-      await this.validandoEmail(updateClienteDto.email);
+
+    // if (cliente.email !== updateClienteDto.email) {
+    // precisa verificar se o email existe pq não é obrigatório
+    if (updateClienteDto.email && cliente.email !== updateClienteDto.email) {
+      // faltou passar o cliente.id
+      await this.validandoEmail(updateClienteDto.email, cliente.id);
     }
 
     return this.repository.update(id, updateClienteDto, trx);

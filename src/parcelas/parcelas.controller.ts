@@ -53,6 +53,7 @@ export class ParcelasController {
     });
   }
 
+  // não pode ter exclusão de parcela !!
   @Delete(':id')
   async remove() {
     return await this.prisma.$transaction(async () => {
