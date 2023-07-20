@@ -32,7 +32,7 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(ValidandoExistenciaCliente)
-      .exclude({ path: 'clientes', method: RequestMethod.POST })
+      .exclude({ path: 'clientes', method: RequestMethod.ALL })
       .forRoutes({ path: '*', method: RequestMethod.ALL });
   }
 }

@@ -3,16 +3,16 @@ import { CreateContaDto } from './dto/create-conta.dto';
 import { UpdateContaDto } from './dto/update-conta.dto';
 import { ContaRepository } from './repositories/conta.repository';
 import { ClientesRepository } from 'src/clientes/repositories/clientes.repository';
-import { ParcelasService } from 'src/parcelas/parcelas.service';
-import { CreditosService } from 'src/creditos/creditos.service';
+import { ParcelasRepository } from 'src/parcelas/repository/parcelas.repository';
+import { CreditoRepository } from 'src/creditos/repositories/credito.repository';
 
 @Injectable()
 export class ContasService {
   constructor(
     private readonly repository: ContaRepository,
     private clienteRepository: ClientesRepository,
-    private parcelas: ParcelasService,
-    private credito: CreditosService,
+    private parcelas: ParcelasRepository,
+    private credito: CreditoRepository,
   ) {}
 
   async validate(clienteId: number, id: number) {

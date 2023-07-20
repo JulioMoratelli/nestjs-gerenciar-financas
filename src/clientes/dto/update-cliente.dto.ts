@@ -1,9 +1,9 @@
 import { IsCpfCnpj } from './../../../decoradores/cpfcnpj.decorador';
-import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsEmail, IsOptional, IsString } from 'class-validator';
 
 export class UpdateClienteDto {
   @IsEmail()
-  @IsNotEmpty()
+  @IsOptional()
   email?: string;
 
   @IsString()

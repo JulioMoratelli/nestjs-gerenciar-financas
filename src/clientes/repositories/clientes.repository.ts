@@ -76,6 +76,7 @@ export class ClientesRepository {
         id,
       },
       data: updateClienteDto,
+      // dataAlterado: new Date(),
     });
     return cliente;
   }

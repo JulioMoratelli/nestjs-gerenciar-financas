@@ -5,6 +5,9 @@ import { ContasService } from './contas.service';
 import { ContasController } from './contas.controller';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ContaRepository } from './repositories/conta.repository';
+import { ParcelasService } from 'src/parcelas/parcelas.service';
+import { CreditosService } from 'src/creditos/creditos.service';
+import { ParcelasRepository } from 'src/parcelas/repository/parcelas.repository';
 
 @Module({
   controllers: [ContasController],
@@ -14,6 +17,8 @@ import { ContaRepository } from './repositories/conta.repository';
     ContaRepository,
     CreditoRepository,
     ClientesRepository,
+    ParcelasRepository,
+    CreditoRepository,
   ],
   exports: [ContasService, ContasModule],
 })

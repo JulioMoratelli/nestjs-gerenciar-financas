@@ -29,11 +29,11 @@ export class ClientesService {
     await this.repository.updateSaldoCliente(clienteId, saldoAtual);
   }
 
-  async validandoEmail(email: string) {
+  async validandoEmail(email: string, clienteId?: number) {
     const clientes = await this.repository.findAllComEndereco();
 
     for (const cliente of clientes) {
-      if (cliente.email === email) {
+      if (cliente.email === email && cliente.id !== clienteId) {
         throw new BadRequestException('Esse email já está cadastrado');
       }
     }
