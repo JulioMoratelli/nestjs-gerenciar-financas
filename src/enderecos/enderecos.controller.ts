@@ -1,3 +1,4 @@
+import { ExtendedRequest } from './../middleware/extended-request.interface';
 import {
   Controller,
   Get,
@@ -6,12 +7,12 @@ import {
   Patch,
   Param,
   Delete,
+  Req,
 } from '@nestjs/common';
 import { EnderecosService } from './enderecos.service';
 import { UpdateEnderecoDto } from './dto/update-endereco.dto';
 import { EnderecoEntity } from './entities/endereco.entity';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { ClienteComEnderecoDto } from 'src/clientes/dto/clienteEndereco.dto';
 import { CreateEnderecoDto } from './dto/create-endereco.dto';
 
 @Controller('enderecos')
@@ -21,50 +22,60 @@ export class EnderecosController {
     private prisma: PrismaService,
   ) {}
 
-  @Post(':clienteId')
+  @Post()
   async create(
-    @Param('clienteId') clienteId: number,
+    @Req() request: ExtendedRequest,
     createEnderecoDto: CreateEnderecoDto,
   ) {
+    const clienteId = request.clienteId;
+
     return await this.prisma.$transaction(async (trx) => {
       return this.enderecosService.create(clienteId, createEnderecoDto, trx);
     });
   }
 
-  @Post(':clienteId')
-  async createComEndereco(
-    @Param('clienteId') clienteId: number,
-    clienteComEnderecoDto: ClienteComEnderecoDto,
-  ) {
-    return await this.prisma.$transaction(async (trx) => {
-      return this.enderecosService.createComCliente(
-        clienteId,
-        clienteComEnderecoDto,
-        trx,
-      );
-    });
-  }
+  // @Post(':clienteId')
+  // async createComEndereco(
+  //   @Req() request: ExtendedRequest,
+  //   clienteComEnderecoDto: ClienteComEnderecoDto,
+  // ) {
+  //   const clienteId = request.clienteId;
 
-  @Get(':clienteId')
-  findAll(@Param('clienteId') clienteId: number) {
+  //   return await this.prisma.$transaction(async (trx) => {
+  //     return this.enderecosService.createComCliente(
+  //       clienteId,
+  //       clienteComEnderecoDto,
+  //       trx,
+  //     );
+  //   });
+  // }
+
+  @Get()
+  findAll(@Req() request: ExtendedRequest) {
+    const clienteId = request.clienteId;
+
     return this.enderecosService.findAll(clienteId);
   }
 
-  @Get(':clienteId/:id')
+  @Get(':id')
   findOne(
-    @Param('clienteId') clienteId: number,
+    @Req() request: ExtendedRequest,
     @Param('id') id: string,
   ): Promise<EnderecoEntity> {
+    const clienteId = request.clienteId;
+
     return this.enderecosService.findOne(clienteId, +id);
   }
 
-  @Patch(':clienteId/:id')
+  @Patch(':id')
   async update(
-    @Param('clienteId') clienteId: number,
+    @Req() request: ExtendedRequest,
     @Param('id') id: string,
     @Body() updateEnderecoDto: UpdateEnderecoDto,
   ) {
     try {
+      const clienteId = request.clienteId;
+
       return await this.prisma.$transaction(async (trx) => {
         return this.enderecosService.update(
           clienteId,
@@ -77,8 +88,10 @@ export class EnderecosController {
   }
 
   @Delete(':id')
-  async remove(@Param('clienteId') clienteId: number, @Param('id') id: string) {
+  async remove(@Req() request: ExtendedRequest, @Param('id') id: string) {
     try {
+      const clienteId = request.clienteId;
+
       return await this.prisma.$transaction(async (trx) => {
         return this.enderecosService.remove(clienteId, +id, trx);
       });

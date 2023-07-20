@@ -3,12 +3,16 @@ import { CreateContaDto } from './dto/create-conta.dto';
 import { UpdateContaDto } from './dto/update-conta.dto';
 import { ContaRepository } from './repositories/conta.repository';
 import { ClientesRepository } from 'src/clientes/repositories/clientes.repository';
+import { ParcelasService } from 'src/parcelas/parcelas.service';
+import { CreditosService } from 'src/creditos/creditos.service';
 
 @Injectable()
 export class ContasService {
   constructor(
     private readonly repository: ContaRepository,
     private clienteRepository: ClientesRepository,
+    private parcelas: ParcelasService,
+    private credito: CreditosService,
   ) {}
 
   async validate(clienteId: number, id: number) {
@@ -89,6 +93,15 @@ export class ContasService {
 
   async remove(clienteId: number, id: number, trx) {
     await this.validate(clienteId, id);
+
+    const existeLancamentos = await this.parcelas.findOne(clienteId, id);
+    const existeCreditos = await this.credito.findOne(clienteId, id);
+
+    if (existeLancamentos || existeCreditos) {
+      throw new BadRequestException(
+        'Conta vinculada em outras partes do sistema',
+      );
+    }
 
     return this.repository.remove(clienteId, id, trx);
   }

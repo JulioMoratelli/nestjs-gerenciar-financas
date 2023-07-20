@@ -1,4 +1,4 @@
-import { Request } from 'express';
+import { ExtendedRequest } from './../middleware/extended-request.interface';
 import {
   Controller,
   Get,
@@ -7,8 +7,7 @@ import {
   Patch,
   Param,
   Delete,
-  Header,
-  RequestMapping,
+  Req,
 } from '@nestjs/common';
 import { ContasService } from './contas.service';
 import { CreateContaDto } from './dto/create-conta.dto';
@@ -23,41 +22,57 @@ export class ContasController {
   ) {}
 
   @Post()
-  async create(clienteId: number, @Body() createContaDto: CreateContaDto) {
+  async create(
+    @Req() request: ExtendedRequest,
+    @Body() createContaDto: CreateContaDto,
+  ) {
+    const clienteId = request.clienteId;
+
     return await this.prisma.$transaction(async (trx) => {
       return this.contasService.create(clienteId, createContaDto, trx);
     });
   }
 
-  @Get(':clienteId')
-  findAll(@Param('clienteId') clienteId: number) {
+  @Get()
+  findAll(@Req() request: ExtendedRequest) {
+    const clienteId = request.clienteId;
+
     return this.contasService.findAll(clienteId);
   }
 
-  @Get(':clienteId/:id')
-  findOne(@Param('clienteId') clienteId: number, @Param('id') id: number) {
+  @Get(':id')
+  findOne(@Req() request: ExtendedRequest, @Param('id') id: number) {
+    const clienteId = request.clienteId;
+
     return this.contasService.findOne(clienteId, +id);
   }
 
-  @Patch(':clienteId/:id')
+  @Patch(':id')
   async update(
-    @Param('clienteId') clienteId: number,
+    @Req() request: ExtendedRequest,
     @Param('id') id: string,
     @Body() updateContaDto: UpdateContaDto,
   ) {
+    const clienteId = request.clienteId;
+
     return await this.prisma.$transaction(async (trx) => {
       return this.contasService.update(clienteId, +id, updateContaDto, trx);
     });
   }
 
-  @Delete(':clienteId/:id')
-  async remove(@Param('clienteId') clienteId: number, @Param('id') id: string) {
+  @Delete(':id')
+  async remove(@Req() request: ExtendedRequest, @Param('id') id: string) {
+    const clienteId = request.clienteId;
+
     return await this.prisma.$transaction(async (trx) => {
       return this.contasService.remove(clienteId, +id, trx);
     });
   }
 }
 
+// function Res(): (target: ContasController, propertyKey: "create", parameterIndex: 0) => void {
+//   throw new Error('Function not implemented.');
+// }
 // function ApiHeader(
 //   clienteId: number,
 //   id: number,

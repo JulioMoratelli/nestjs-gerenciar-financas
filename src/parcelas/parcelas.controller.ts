@@ -1,4 +1,13 @@
-import { Controller, Get, Body, Patch, Param, Delete } from '@nestjs/common';
+import { ExtendedRequest } from './../middleware/extended-request.interface';
+import {
+  Controller,
+  Get,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Req,
+} from '@nestjs/common';
 import { ParcelasService } from './parcelas.service';
 import { UpdateParcelaDto } from './dto/update-parcela.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -10,23 +19,29 @@ export class ParcelasController {
     private prisma: PrismaService,
   ) {}
 
-  @Get(':clienteId')
-  findAll(clienteId: number) {
+  @Get()
+  findAll(@Req() request: ExtendedRequest) {
+    const clienteId = request.clienteId;
+
     return this.parcelasService.findAll(clienteId);
   }
 
-  @Get(':clienteId/:id')
-  findOne(@Param('clienteId') clienteId: number, @Param('id') id: number) {
+  @Get(':id')
+  findOne(@Req() request: ExtendedRequest, @Param('id') id: number) {
+    const clienteId = request.clienteId;
+
     return this.parcelasService.findOne(clienteId, id);
   }
 
-  @Patch(':clienteId/:lancamentoId/:id')
+  @Patch(':id')
   async update(
-    @Param('clienteId') clienteId: number,
+    @Req() request: ExtendedRequest,
     @Param('lancamentoId') lancamentoId: number,
     @Param('id') id: string,
     @Body() updateParcelaDto: UpdateParcelaDto,
   ) {
+    const clienteId = request.clienteId;
+
     return await this.prisma.$transaction(async (trx) => {
       return this.parcelasService.update(
         clienteId,

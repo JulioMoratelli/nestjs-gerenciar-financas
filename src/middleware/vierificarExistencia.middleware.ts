@@ -1,6 +1,7 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
+import { ExtendedRequest } from './extended-request.interface';
 
 @Injectable()
 export class ValidandoExistenciaCliente implements NestMiddleware {
@@ -11,7 +12,7 @@ export class ValidandoExistenciaCliente implements NestMiddleware {
 
   private readonly prisma = new PrismaClient();
 
-  async use(req: Request, res: Response, next: NextFunction) {
+  async use(req: ExtendedRequest, res: Response, next: NextFunction) {
     const clienteId = req.header('clienteId');
 
     if (!clienteId) {
@@ -26,6 +27,8 @@ export class ValidandoExistenciaCliente implements NestMiddleware {
       if (!cliente) {
         return res.status(403).json({ error: 'Cliente não encontrato' });
       }
+
+      req.clienteId = Number(clienteId);
 
       next();
     } catch (error) {

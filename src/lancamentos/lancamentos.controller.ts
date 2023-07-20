@@ -1,3 +1,4 @@
+import { ExtendedRequest } from './../middleware/extended-request.interface';
 import { PrismaService } from 'src/prisma/prisma.service';
 import {
   Controller,
@@ -7,6 +8,7 @@ import {
   Patch,
   Param,
   Delete,
+  Req,
 } from '@nestjs/common';
 import { LancamentosService } from './lancamentos.service';
 import { CreateLancamentoDto } from './dto/create-lancamento.dto';
@@ -19,11 +21,13 @@ export class LancamentosController {
     private prisma: PrismaService,
   ) {}
 
-  @Post(':clienteId')
+  @Post()
   async create(
-    @Param('clienteId') clienteId: number,
+    @Req() request: ExtendedRequest,
     @Body() createLancamentoDto: CreateLancamentoDto,
   ) {
+    const clienteId = request.clienteId;
+
     return await this.prisma.$transaction(async (trx) => {
       return this.lancamentosService.create(
         clienteId,
@@ -33,25 +37,28 @@ export class LancamentosController {
     });
   }
 
-  @Get(':clienteId')
-  async findAll(@Param('clienteId') clienteId: number) {
+  @Get()
+  async findAll(@Req() request: ExtendedRequest) {
+    const clienteId = request.clienteId;
+
     return this.lancamentosService.findAll(clienteId);
   }
 
   @Get(':id')
-  async findOne(
-    @Param('clienteId') clienteId: number,
-    @Param('id') id: number,
-  ) {
+  async findOne(@Req() request: ExtendedRequest, @Param('id') id: number) {
+    const clienteId = request.clienteId;
+
     return this.lancamentosService.findOne(+id, clienteId);
   }
 
-  @Patch(':clienteId/:id')
+  @Patch(':id')
   async update(
-    @Param('clienteId') clienteId: number,
+    @Req() request: ExtendedRequest,
     @Param('id') id: string,
     @Body() updateLancamentoDto: UpdateLancamentoDto,
   ) {
+    const clienteId = request.clienteId;
+
     return await this.prisma.$transaction(async (trx) => {
       return this.lancamentosService.update(
         clienteId,
@@ -62,8 +69,10 @@ export class LancamentosController {
     });
   }
 
-  @Delete(':clienteId/:id')
-  async remove(@Param('clienteId') clienteId: number, @Param('id') id: string) {
+  @Delete(':id')
+  async remove(@Req() request: ExtendedRequest, @Param('id') id: string) {
+    const clienteId = request.clienteId;
+
     return await this.prisma.$transaction(async (trx) => {
       return this.lancamentosService.remove(+id, clienteId, trx);
     });
