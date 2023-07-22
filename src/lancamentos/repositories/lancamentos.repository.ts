@@ -59,4 +59,14 @@ export class LancamentosRepository {
       },
     });
   }
+
+  atualizarStatusLancamento(clienteId: number, id: number, status: string) {
+    return this.prisma.lancamento.update({
+      where: {
+        clienteId,
+        id,
+      },
+      data: { status: status },
+    });
+  }
 }

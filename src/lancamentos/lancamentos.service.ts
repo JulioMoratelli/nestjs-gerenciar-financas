@@ -5,12 +5,14 @@ import { LancamentosRepository } from './repositories/lancamentos.repository';
 import { ParcelasService } from 'src/parcelas/parcelas.service';
 import { BadRequestException } from '@nestjs/common';
 import { ClientesRepository } from 'src/clientes/repositories/clientes.repository';
+import { ParcelasRepository } from 'src/parcelas/repository/parcelas.repository';
 
 @Injectable()
 export class LancamentosService {
   constructor(
     private readonly repository: LancamentosRepository,
     private parcela: ParcelasService,
+    private parcelaRepository: ParcelasRepository,
     private clienteRepository: ClientesRepository,
   ) {}
 
@@ -95,6 +97,8 @@ export class LancamentosService {
 
   async remove(clienteId: number, id: number, trx) {
     await this.validate(clienteId, id);
+
+    const pacelas = await this.parcelaRepository.
 
     return this.repository.remove(clienteId, id, trx);
 

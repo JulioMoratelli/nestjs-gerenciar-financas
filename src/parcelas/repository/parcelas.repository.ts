@@ -74,4 +74,31 @@ export class ParcelasRepository {
       },
     });
   }
+
+  atualizarStatusPagamento(clienteId: number, id: number, status: boolean) {
+    return this.prisma.parcela.update({
+      where: {
+        clienteId,
+        id,
+      },
+      data: { pago: status },
+    });
+  }
+
+  findAllLancamento(lancamentoId: number) {
+    return this.prisma.parcela.findMany({
+      where: {
+        lancamentoId,
+      },
+    });
+  }
+
+  findAllParcelasPagas(lancamentoId: number) {
+    return this.prisma.parcela.findMany({
+      where: {
+        lancamentoId,
+        pago: true,
+      },
+    });
+  }
 }

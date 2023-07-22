@@ -6,6 +6,7 @@ import { ParcelasRepository } from './repository/parcelas.repository';
 import { Decimal } from '@prisma/client/runtime';
 import { addDays } from 'date-fns';
 import { ClientesRepository } from 'src/clientes/repositories/clientes.repository';
+import { LancamentosRepository } from 'src/lancamentos/repositories/lancamentos.repository';
 
 @Injectable()
 export class ParcelasService {
@@ -13,6 +14,7 @@ export class ParcelasService {
     private readonly repository: ParcelasRepository,
     private contaRepository: ContaRepository,
     private clienteRepository: ClientesRepository,
+    private lancamento: LancamentosRepository,
   ) {}
 
   async createParcelasComLancamento(
@@ -38,6 +40,7 @@ export class ParcelasService {
       };
       await this.repository.create(clienteId, parcela, trx);
     }
+    await this.atualizarStatusLancamento(clienteId, lancamentoId);
   }
 
   async findAll(
@@ -52,6 +55,9 @@ export class ParcelasService {
     }
 
     // faltou validar se caso informado o período existam as duas datas
+    if (periodo && (!periodo.deData || !periodo.ateData)) {
+      throw new BadRequestException('Informe as duas datas que deseja filtrar');
+    }
 
     return this.repository.findAll(clienteId, periodo, status);
   }
@@ -105,6 +111,8 @@ export class ParcelasService {
       await this.identificarReversao(clienteId, id);
     }
 
+    await this.atualizarStatusLancamento(clienteId, lancamentoId);
+
     return atualizarParcela;
   }
 
@@ -122,9 +130,13 @@ export class ParcelasService {
 
     if (!parcela) {
       throw new BadRequestException('Parcela não existe');
-    } else if (parcela.pago) {
+    }
+
+    if (parcela.pago) {
       throw new BadRequestException('Parcela já foi paga');
-    } else if (!conta) {
+    }
+
+    if (!conta) {
       throw new BadRequestException('Conta não existe');
     }
 
@@ -136,6 +148,7 @@ export class ParcelasService {
     );
 
     // faltou mudar a parcela & lançamento
+    await this.repository.atualizarStatusPagamento(clienteId, id, true);
   }
 
   async identificarReversao(clienteId: number, id: number) {
@@ -151,9 +164,9 @@ export class ParcelasService {
 
     // esse if não precisaria ser feito pq teoricamente se a parcela tem uma conta_id e não está
     // paga, algo mto errado já aconteceu antes 😅
-    if (!parcela.contaId) {
-      throw new BadRequestException('Não foi informado uma conta');
-    }
+    // if (!parcela.contaId) {
+    //   throw new BadRequestException('Não foi informado uma conta');
+    // }
 
     const conta = await this.contaRepository.findOne(
       clienteId,
@@ -172,5 +185,35 @@ export class ParcelasService {
     );
 
     // faltou mudar a parcela & lançamento
+    await this.repository.atualizarStatusPagamento(clienteId, id, false);
+  }
+
+  async atualizarStatusLancamento(clienteId: number, lancamentoId: number) {
+    const lancamentos = await this.lancamento.findOne(clienteId, lancamentoId);
+
+    if (!lancamentos) {
+      throw new BadRequestException('lancamento não encontrado');
+    }
+
+    const parcelas = await this.repository.findAllLancamento(lancamentoId);
+
+    const parcelasPagas = parcelas.every((parcela) => parcela.pago);
+    const parcelasNaoPagas = parcelas.every((parcela) => !parcela.pago);
+
+    let statusLancamentos = null;
+
+    if (parcelasPagas) {
+      statusLancamentos = 'PAGO';
+    } else if (parcelasNaoPagas) {
+      statusLancamentos = 'DÉBITO';
+    } else {
+      statusLancamentos = 'PARCIAL';
+    }
+
+    await this.lancamento.atualizarStatusLancamento(
+      clienteId,
+      lancamentoId,
+      statusLancamentos,
+    );
   }
 }
