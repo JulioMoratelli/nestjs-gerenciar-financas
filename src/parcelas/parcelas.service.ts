@@ -22,11 +22,12 @@ export class ParcelasService {
     lancamentoId: number,
     numeroParcela: number,
     valor: Decimal,
+    primeiraParcela: Date,
     trx,
   ) {
     const valorParcela = Number(valor) / numeroParcela;
     // faltou pegar a data informada como primeira parcela no lançamento
-    const dataPrimeiraParcela = new Date();
+    const dataPrimeiraParcela = primeiraParcela;
 
     for (let i = 1; i <= numeroParcela; i++) {
       const vencimentoMensalidade = addDays(dataPrimeiraParcela, 5 * (i - 1));

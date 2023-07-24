@@ -75,6 +75,14 @@ export class ParcelasRepository {
     });
   }
 
+  removeParcelaComLancamento(lancamentoId: number) {
+    return this.prisma.parcela.deleteMany({
+      where: {
+        lancamentoId,
+      },
+    });
+  }
+
   atualizarStatusPagamento(clienteId: number, id: number, status: boolean) {
     return this.prisma.parcela.update({
       where: {

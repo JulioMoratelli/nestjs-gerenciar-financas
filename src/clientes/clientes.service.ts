@@ -77,16 +77,24 @@ export class ClientesService {
       clienteComEnderecoDto.cep ||
       clienteComEnderecoDto.complemento
     ) {
-      if (
-        !clienteComEnderecoDto.rua ||
-        !clienteComEnderecoDto.numero ||
-        !clienteComEnderecoDto.bairro ||
-        !clienteComEnderecoDto.cidade ||
-        !clienteComEnderecoDto.cep
-      ) {
-        throw new BadRequestException(
-          'Dados de endereço incompleto (rua, numero, bairro, cidade, cep)',
-        );
+      if (!clienteComEnderecoDto.rua) {
+        throw new BadRequestException('A informação rua esta faltando');
+      }
+
+      if (!clienteComEnderecoDto.numero) {
+        throw new BadRequestException('A informação numero esta faltando');
+      }
+
+      if (!clienteComEnderecoDto.bairro) {
+        throw new BadRequestException('A informação bairro esta faltando');
+      }
+
+      if (!clienteComEnderecoDto.cidade) {
+        throw new BadRequestException('A informação cidade esta faltando');
+      }
+
+      if (!clienteComEnderecoDto.cep) {
+        throw new BadRequestException('A informação cep esta faltando');
       }
 
       const cliente = await this.repository.create(dadosCreateCliente, trx);

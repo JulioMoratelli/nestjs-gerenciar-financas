@@ -50,20 +50,22 @@ export class LancamentosService {
       trx,
     );
 
+    const primeiraParcela = createLancamentoDto.primeiroVencimento;
+
     // aqui não precisaria desse if pq nesse ponto o lançamento TEM que ter sido criado
-    if (lancamento) {
-      const { id, numeroParcelas, valorTotal, clienteId } = lancamento;
 
-      await this.parcela.createParcelasComLancamento(
-        clienteId,
-        id,
-        numeroParcelas,
-        valorTotal,
-        trx,
-      );
-    }
+    const { id, numeroParcelas, valorTotal } = lancamento;
 
-    console.log(lancamento);
+    await this.parcela.createParcelasComLancamento(
+      clienteId,
+      id,
+      numeroParcelas,
+      valorTotal,
+      primeiraParcela,
+      trx,
+    );
+
+    // console.log(lancamento);
 
     return lancamento;
   }
@@ -98,10 +100,17 @@ export class LancamentosService {
   async remove(clienteId: number, id: number, trx) {
     await this.validate(clienteId, id);
 
-    const pacelas = await this.parcelaRepository.
-
-    return this.repository.remove(clienteId, id, trx);
+    const parcelas = await this.parcelaRepository.findAllParcelasPagas(id);
 
     // e as parcelas? e as parcelas pagas? precisa verificar e fazer a engenharia reversa
+    if (parcelas) {
+      throw new BadRequestException(
+        'Esse lançamento ja possui uma parcela paga',
+      );
+    }
+
+    await this.parcelaRepository.removeParcelaComLancamento(id);
+
+    return this.repository.remove(clienteId, id, trx);
   }
 }

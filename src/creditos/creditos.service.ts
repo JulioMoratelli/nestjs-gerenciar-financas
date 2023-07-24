@@ -100,6 +100,8 @@ export class CreditosService {
   async remove(clienteId: number, id: number, trx) {
     await this.validate(clienteId, id);
 
+    throw new BadRequestException('Impossivel excluir um crédito');
+
     return this.repository.remove(clienteId, id, trx);
 
     //e o crédito que já entrou na conta? precisa fazer a engenharia reversa

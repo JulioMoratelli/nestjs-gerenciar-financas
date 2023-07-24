@@ -43,13 +43,23 @@ export class EnderecosService {
     );
 
     const enderecos = await this.repository.findAll(clienteId);
-    const enderecoPadrao = enderecos.some((endereco) => endereco.padrao);
+    const enderecoPadrao = enderecos.find((endereco) => endereco.padrao);
 
     // no caso, aqui ele PODE cadastrar outro email como padrão.
     // precisa verificar e fazer o que tiver que fazer se tiver que fazer alguma coisa
+    // if (createEnderecoDto.padrao && enderecoPadrao) {
+    //   throw new BadRequestException('O cliente já possui um endereço padrão');
+    // }
 
-    if (createEnderecoDto.padrao && enderecoPadrao) {
-      throw new BadRequestException('O cliente já possui um endereço padrão');
+    if (createEnderecoDto.padrao == true) {
+      if (enderecoPadrao) {
+        await this.repository.update(
+          clienteId,
+          enderecoPadrao.id,
+          { padrao: false },
+          trx,
+        );
+      }
     }
 
     return endereco;
@@ -93,13 +103,23 @@ export class EnderecosService {
     await this.validate(clienteId, id);
 
     const enderecos = await this.repository.findAll(clienteId);
-    const enderecoPadrao = enderecos.some((endereco) => endereco.padrao);
+    const enderecoPadrao = enderecos.find((endereco) => endereco.padrao);
 
     // aqui tbm - ele PODE setar outro endereço como padrão
     // novamente, precisa verificar e fazer o que tiver que fazer...
+    // if (updateEnderecoDto.padrao && enderecoPadrao) {
+    //   throw new BadRequestException('O cliente já possui um endereço padrão');
+    // }
 
-    if (updateEnderecoDto.padrao && enderecoPadrao) {
-      throw new BadRequestException('O cliente já possui um endereço padrão');
+    if (updateEnderecoDto.padrao == true) {
+      if (enderecoPadrao) {
+        await this.repository.update(
+          clienteId,
+          enderecoPadrao.id,
+          { padrao: false },
+          trx,
+        );
+      }
     }
 
     return this.repository.update(clienteId, id, updateEnderecoDto, trx);
