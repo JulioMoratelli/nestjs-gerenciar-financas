@@ -6,6 +6,18 @@ import { PrismaService } from './../prisma/prisma.service';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ClientesController } from './clientes.controller';
 import { ClientesService } from './clientes.service';
+import { vi } from 'vitest';
+import { ClientesEntity } from './entities/cliente.entity';
+
+const clientesEntityList: ClientesEntity[] = [
+  new ClientesEntity({
+    id: 1,
+    cpf: '24021874844',
+    email: 'a@a.com',
+    nome: 'julio',
+    sobrenome: 'morats',
+  }),
+];
 
 describe('ClientesController', () => {
   let clienteController: ClientesController;
@@ -21,6 +33,14 @@ describe('ClientesController', () => {
         EnderecosRepository,
         EnderecosService,
         ContaRepository,
+        {
+          provide: ClientesService,
+          useValue: {
+            findAllClienteEndereco: vi
+              .fn()
+              .mockResolvedValue(clientesEntityList),
+          },
+        },
       ],
     }).compile();
 
@@ -33,7 +53,13 @@ describe('ClientesController', () => {
     expect(clientesService).toBeDefined();
   });
 
-  describe('get', () => {
-    
-  })
+  describe('find all', () => {
+    it('deve retornar o clientes entity se possivel endereco entity', async () => {
+      // act
+      const result = await clienteController.findAllClienteEndereco();
+
+      //assert
+      expect(result).toEqual([clientesEntityList]);
+    });
+  });
 });

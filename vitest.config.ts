@@ -1,13 +1,14 @@
 /// <reference types="vitest" />
-import { defineConfig } from 'vite';
+import swc from 'unplugin-swc';
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
-    include: ['**/*.e2e-spec.ts'],
+    include: ['**/clientes.controller.spec.ts'],
     globals: true,
     alias: {
       '@src': './src',
-      '@test': './test',
+      '@test': './.spec.ts',
     },
     root: './',
   },
@@ -17,4 +18,5 @@ export default defineConfig({
       '@test': './test',
     },
   },
+  // plugins: [swc.vite()],
 });

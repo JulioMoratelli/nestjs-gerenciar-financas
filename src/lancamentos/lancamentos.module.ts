@@ -21,5 +21,6 @@ import { LancamentosRepository } from './repositories/lancamentos.repository';
     ContaRepository,
     ClientesRepository,
   ],
+  exports: [LancamentosRepository],
 })
 export class LancamentosModule {}

@@ -6,6 +6,7 @@ import { ParcelasService } from './parcelas.service';
 import { ParcelasController } from './parcelas.controller';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ParcelasRepository } from './repository/parcelas.repository';
+import { LancamentosRepository } from 'src/lancamentos/repositories/lancamentos.repository';
 
 @Module({
   controllers: [ParcelasController],
@@ -16,7 +17,9 @@ import { ParcelasRepository } from './repository/parcelas.repository';
     ContaEntity,
     ContaRepository,
     ClientesRepository,
+    LancamentosRepository,
   ],
+  imports: [],
   exports: [ParcelasRepository],
 })
 export class ParcelasModule {}
