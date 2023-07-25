@@ -32,4 +32,8 @@ describe('ClientesController', () => {
     expect(clienteController).toBeDefined();
     expect(clientesService).toBeDefined();
   });
+
+  describe('get', () => {
+    
+  })
 });
