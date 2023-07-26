@@ -8,6 +8,7 @@ import { ClientesController } from './clientes.controller';
 import { ClientesService } from './clientes.service';
 import { vi } from 'vitest';
 import { ClientesEntity } from './entities/cliente.entity';
+import { EnderecoEntity } from './../enderecos/entities/endereco.entity';
 
 const clientesEntityList: ClientesEntity[] = [
   new ClientesEntity({
@@ -27,7 +28,6 @@ describe('ClientesController', () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ClientesController],
       providers: [
-        ClientesService,
         PrismaService,
         ClientesRepository,
         EnderecosRepository,
@@ -38,7 +38,7 @@ describe('ClientesController', () => {
           useValue: {
             findAllClienteEndereco: vi
               .fn()
-              .mockResolvedValue(clientesEntityList),
+              .mockResolvedValue(clientesEntityList), // Simulando o retorno dos clientes corretamente
           },
         },
       ],
@@ -59,7 +59,12 @@ describe('ClientesController', () => {
       const result = await clienteController.findAllClienteEndereco();
 
       //assert
-      expect(result).toEqual([clientesEntityList]);
+      expect(result).toEqual(
+        clientesEntityList.map((cliente) => ({
+          cliente,
+          endereco: new EnderecoEntity(),
+        })),
+      );
     });
   });
 });

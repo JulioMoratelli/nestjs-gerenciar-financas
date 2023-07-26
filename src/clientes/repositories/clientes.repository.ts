@@ -59,6 +59,8 @@ export class ClientesRepository {
             bairro: true,
             numero: true,
             cidade: true,
+            cep: true,
+            complemento: true,
           },
         },
       },
