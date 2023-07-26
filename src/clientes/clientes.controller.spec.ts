@@ -8,17 +8,30 @@ import { ClientesController } from './clientes.controller';
 import { ClientesService } from './clientes.service';
 import { vi } from 'vitest';
 import { ClientesEntity } from './entities/cliente.entity';
-import { EnderecoEntity } from './../enderecos/entities/endereco.entity';
+import { ClienteComEnderecoDto } from './dto/clienteEndereco.dto';
 
 const clientesEntityList: ClientesEntity[] = [
   new ClientesEntity({
     id: 1,
-    cpf: '24021874844',
-    email: 'a@a.com',
-    nome: 'julio',
-    sobrenome: 'morats',
+    email: 'string',
+    cpf: '240121874844',
+    nome: 'string',
+    sobrenome: 'string',
   }),
 ];
+
+const novoCliente = new ClientesEntity({
+  email: 'string',
+  cpf: 'string',
+  nome: 'string',
+  sobrenome: 'string',
+  // rua: 'string',
+  // numero: 123,
+  // bairro: 'string',
+  // complemento: 'string',
+  // cidade: 'string',
+  // cep: 123,
+});
 
 describe('ClientesController', () => {
   let clienteController: ClientesController;
@@ -38,7 +51,8 @@ describe('ClientesController', () => {
           useValue: {
             findAllClienteEndereco: vi
               .fn()
-              .mockResolvedValue(clientesEntityList), // Simulando o retorno dos clientes corretamente
+              .mockResolvedValue(clientesEntityList),
+            create: vi.fn().mockResolvedValue(novoCliente),
           },
         },
       ],
@@ -54,17 +68,47 @@ describe('ClientesController', () => {
   });
 
   describe('find all', () => {
-    it('deve retornar o clientes entity se possivel endereco entity', async () => {
+    it('deve retornar o clientes entity', async () => {
       // act
       const result = await clienteController.findAllClienteEndereco();
+      const clientesEntities = result.map(
+        (result) => new ClientesEntity(result),
+      );
 
       //assert
-      expect(result).toEqual(
-        clientesEntityList.map((cliente) => ({
-          cliente,
-          endereco: new EnderecoEntity(),
-        })),
+      expect(clientesEntities).toEqual(clientesEntityList);
+    });
+
+    it('test com erro', () => {
+      vi.spyOn(clientesService, 'findAllClienteEndereco').mockRejectedValueOnce(
+        new Error(),
       );
+
+      expect(clienteController.findAllClienteEndereco()).rejects.toThrowError();
+    });
+  });
+
+  describe('create', () => {
+    it('novo cliente criado com sucesso', async () => {
+      //arrange
+      const body: ClienteComEnderecoDto = {
+        email: 'string@g.com',
+        cpf: '24021874844',
+        nome: 'string',
+        sobrenome: 'string',
+        rua: 'string',
+        numero: 123,
+        bairro: 'string',
+        complemento: 'string',
+        cidade: 'string',
+        cep: 123,
+      };
+
+      //act
+      const result = await clienteController.createClienteComEndereco(body);
+
+      //assert
+      expect(result).toEqual(novoCliente);
     });
   });
 });

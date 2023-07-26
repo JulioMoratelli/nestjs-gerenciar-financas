@@ -26,7 +26,9 @@ export class ClientesController {
     // @Body() clienteComEnderecoDto: ClienteComEnderecoDto | CreateClienteDto,
     @Body() clienteComEnderecoDto: ClienteComEnderecoDto,
   ) {
+    console.log({ clienteComEnderecoDto });
     try {
+      console.log('chego');
       return await this.prisma.$transaction(async (trx) => {
         return await this.clientesService.createClienteComEndereco(
           clienteComEnderecoDto,
@@ -59,6 +61,7 @@ export class ClientesController {
     @Param('id') id: string,
     @Body() updateClienteDto: UpdateClienteDto,
   ) {
+    console.log({ updateClienteDto });
     return await this.prisma.$transaction(async (trx) => {
       const update = this.clientesService.update(+id, updateClienteDto, trx);
       return update;

@@ -19,6 +19,8 @@ export class ValidandoExistenciaCliente implements NestMiddleware {
       return res.status(403).json({ error: 'Cliente não informado' });
     }
 
+    console.log('cliente mid', clienteId);
+
     try {
       const cliente = await this.prisma.cliente.findUnique({
         where: { id: Number(clienteId) },

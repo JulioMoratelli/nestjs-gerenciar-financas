@@ -36,12 +36,6 @@ export class EnderecosService {
       throw new BadRequestException('Esse cliente não existe');
     }
 
-    const endereco = await this.repository.create(
-      clienteId,
-      createEnderecoDto,
-      trx,
-    );
-
     const enderecos = await this.repository.findAll(clienteId);
     const enderecoPadrao = enderecos.find((endereco) => endereco.padrao);
 
@@ -61,6 +55,12 @@ export class EnderecosService {
         );
       }
     }
+
+    const endereco = await this.repository.create(
+      clienteId,
+      createEnderecoDto,
+      trx,
+    );
 
     return endereco;
   }

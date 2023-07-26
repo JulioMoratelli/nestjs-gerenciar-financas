@@ -51,7 +51,7 @@ export class ClientesService {
     const { email, cpf, nome, sobrenome } = clienteComEnderecoDto;
     const dadosCreateCliente = { email, cpf, nome, sobrenome };
 
-    await this.validandoEmail(dadosCreateCliente.email);
+    // await this.validandoEmail(dadosCreateCliente.email);
 
     /*
     🗣️ aqui precisa melhorar a validação. pra cadastrar um endereço, apenas o 

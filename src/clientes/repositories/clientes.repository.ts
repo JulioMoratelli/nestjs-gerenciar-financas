@@ -13,12 +13,11 @@ export class ClientesRepository {
     createClienteDto: CreateClienteDto,
     trx: Prisma.TransactionClient,
   ): Promise<Cliente> {
-    const cliente = trx.cliente.create({
+    return trx.cliente.create({
       data: {
         ...createClienteDto,
       },
     });
-    return cliente;
   }
 
   async findOne(id: number): Promise<Cliente> {
