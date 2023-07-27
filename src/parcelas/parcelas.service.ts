@@ -109,7 +109,7 @@ export class ParcelasService {
         updateParcelaDto.contaId,
       );
     } else if (updateParcelaDto.pago === false) {
-      await this.identificarReversao(clienteId, id);
+      await this.identificarReversao(clienteId, id, updateParcelaDto.contaId);
     }
 
     await this.atualizarStatusLancamento(clienteId, lancamentoId);
@@ -123,7 +123,6 @@ export class ParcelasService {
 
   async IdentificandoPagamento(clienteId: number, id: number, contaId: number) {
     const parcela = await this.repository.findOne(clienteId, id);
-    const conta = await this.contaRepository.findOne(clienteId, contaId);
 
     // console.log(parcela);
     // console.log(conta);
@@ -137,22 +136,16 @@ export class ParcelasService {
       throw new BadRequestException('Parcela já foi paga');
     }
 
-    if (!conta) {
-      throw new BadRequestException('Conta não existe');
-    }
-
-    const novoSaldo = Number(conta.saldo) - Number(parcela.valor);
-
-    await this.contaRepository.updateSaldoConta(
+    await this.contaRepository.atualizarSaldoParcelaPaga(
       contaId,
-      new Decimal(novoSaldo),
+      parcela.valor,
     );
 
     // faltou mudar a parcela & lançamento
     await this.repository.atualizarStatusPagamento(clienteId, id, true);
   }
 
-  async identificarReversao(clienteId: number, id: number) {
+  async identificarReversao(clienteId: number, id: number, contaId: number) {
     const parcela = await this.repository.findOne(clienteId, id);
 
     if (!parcela) {
@@ -178,12 +171,7 @@ export class ParcelasService {
       throw new BadRequestException('conta não existe');
     }
 
-    const novoSaldo = Number(conta.saldo) + Number(parcela.valor);
-
-    await this.contaRepository.updateSaldoConta(
-      parcela.clienteId,
-      new Decimal(novoSaldo),
-    );
+    await this.contaRepository.atualizarSaldoCredito(contaId, parcela.valor);
 
     // faltou mudar a parcela & lançamento
     await this.repository.atualizarStatusPagamento(clienteId, id, false);
