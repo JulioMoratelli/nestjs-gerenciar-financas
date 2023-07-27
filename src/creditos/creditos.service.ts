@@ -37,14 +37,9 @@ export class CreditosService {
     contaId: number,
     valor: Decimal,
   ) {
-    const conta = await this.contaRepository.findOne(clienteId, contaId);
-
-    const saldoAtual = new Decimal(conta.saldo);
-    const novoSaldo = valor.plus(saldoAtual);
-
     // console.log(novoSaldo);
 
-    await this.contaRepository.updateSaldoConta(contaId, novoSaldo);
+    await this.contaRepository.atualizarSaldoCredito(contaId, valor);
     await this.clienteService.atualizarSaldoCliente(clienteId);
   }
 
