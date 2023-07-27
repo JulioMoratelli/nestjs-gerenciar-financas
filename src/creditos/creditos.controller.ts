@@ -11,7 +11,7 @@ export class CreditosController {
     public prisma: PrismaService,
   ) {}
 
-  @Post(':clienteId')
+  @Post()
   async create(
     @Req() request: ExtendedRequest,
     @Body() createCreditoDto: CreateCreditoDto,

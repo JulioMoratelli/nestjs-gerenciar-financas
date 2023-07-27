@@ -1,9 +1,7 @@
 import { EnderecosService } from './../enderecos/enderecos.service';
-import { ContaRepository } from './../contas/repositories/conta.repository';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
 import { ClientesRepository } from './repositories/clientes.repository';
-import { Decimal } from '@prisma/client/runtime';
 import { Cliente, Prisma } from '@prisma/client';
 import { ClienteComEnderecoDto } from './dto/clienteEndereco.dto';
 
@@ -11,22 +9,11 @@ import { ClienteComEnderecoDto } from './dto/clienteEndereco.dto';
 export class ClientesService {
   constructor(
     private readonly repository: ClientesRepository,
-    private contasRepository: ContaRepository,
     private enderecoService: EnderecosService,
   ) {}
 
   async atualizarSaldoCliente(clienteId: number): Promise<void> {
-    const contas = await this.contasRepository.findAll(clienteId);
-
-    // console.log(contas);
-    let saldoAtual = new Decimal(0);
-
-    for (let i = 0; i < contas.length; i++) {
-      const valorConta = new Decimal(contas[i].saldo);
-      saldoAtual = saldoAtual.plus(valorConta);
-    }
-
-    await this.repository.updateSaldoCliente(clienteId, saldoAtual);
+    await this.repository.updateSaldoCliente(clienteId);
   }
 
   async validandoEmail(email: string, clienteId?: number) {

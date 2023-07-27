@@ -1,7 +1,6 @@
 import { PrismaService } from './../../prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { UpdateClienteDto } from '../dto/update-cliente.dto';
-import { Decimal } from '@prisma/client/runtime';
 import { Cliente, Prisma } from '@prisma/client';
 import { CreateClienteDto } from '../dto/create-cliente.dto';
 
@@ -82,8 +81,19 @@ export class ClientesRepository {
     return cliente;
   }
 
-  async updateSaldoCliente(id: number, saldoAtual: Decimal): Promise<Cliente> {
-    const cliente = this.prisma.cliente.update({
+  async updateSaldoCliente(id: number): Promise<void> {
+    const aggregations = await this.prisma.conta.aggregate({
+      _sum: {
+        saldo: true,
+      },
+      where: {
+        clienteId: id,
+      },
+    });
+
+    const saldoAtual = aggregations._sum.saldo;
+
+    await this.prisma.cliente.update({
       where: {
         id,
       },
@@ -91,7 +101,6 @@ export class ClientesRepository {
         saldo: saldoAtual,
       },
     });
-    return cliente;
   }
 
   async remove(id: number, trx: Prisma.TransactionClient): Promise<Cliente> {
