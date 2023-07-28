@@ -142,5 +142,15 @@ describe('ClientesController', () => {
       expect(clientesService.findOne).toHaveBeenCalledTimes(1);
       expect(clientesService.findOne).toHaveBeenCalledWith(1);
     });
+
+    it('algo deu errado', () => {
+      //Arrange
+      vi.spyOn(clientesService, 'findOne').mockRejectedValueOnce(new Error());
+
+      //Assert
+      expect(clienteController.findOne(1)).rejects.toThrowError();
+    });
   });
+
+  
 });
