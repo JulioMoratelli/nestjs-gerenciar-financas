@@ -1,4 +1,11 @@
-import { PartialType } from '@nestjs/swagger';
-import { CreateLancamentoDto } from './create-lancamento.dto';
+import { IsDate, IsNotEmpty, IsString } from 'class-validator';
 
-export class UpdateLancamentoDto extends PartialType(CreateLancamentoDto) {}
+export class UpdateLancamentoDto {
+  @IsString()
+  @IsNotEmpty()
+  descricao: string;
+
+  @IsDate()
+  @IsNotEmpty()
+  primeiroVencimento: Date;
+}

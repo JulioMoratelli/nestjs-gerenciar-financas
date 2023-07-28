@@ -1,15 +1,16 @@
 // import { IsCpfCnpj } from './../../../decoradores/cpfcnpj.decorador';
-import { IsOptional, IsString } from 'class-validator';
+import { IsEmail, IsOptional, IsString } from 'class-validator';
+import { IsCpfCnpj } from 'decoradores/cpfcnpj.decorador';
 
 export class UpdateClienteDto {
-  // @IsEmail()
-  // @IsOptional()
-  // email?: string;
+  @IsEmail()
+  @IsOptional()
+  email?: string;
 
-  // @IsString()
-  // @IsCpfCnpj('cpf')
-  // @IsOptional()
-  // cpf?: string;
+  @IsString()
+  @IsCpfCnpj('cpf')
+  @IsOptional()
+  cpf?: string;
 
   @IsString()
   @IsOptional()

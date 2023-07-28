@@ -1,4 +1,7 @@
-import { PartialType } from '@nestjs/swagger';
-import { CreateCreditoDto } from './create-credito.dto';
+import { Decimal } from '@prisma/client/runtime';
+import { IsDecimal } from 'class-validator';
 
-export class UpdateCreditoDto extends PartialType(CreateCreditoDto) {}
+export class UpdateCreditoDto {
+  @IsDecimal()
+  valor: Decimal;
+}
