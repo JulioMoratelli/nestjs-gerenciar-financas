@@ -57,13 +57,34 @@ export class ContaRepository {
     });
   }
 
-  async updateSaldoConta(id: number, novoSaldo: Decimal): Promise<ContaEntity> {
+  async atualizarSaldoCredito(
+    id: number,
+    valorParcela: Decimal,
+  ): Promise<ContaEntity> {
     return await this.prisma.conta.update({
       where: {
         id,
       },
       data: {
-        saldo: novoSaldo,
+        saldo: {
+          increment: valorParcela,
+        },
+      },
+    });
+  }
+
+  async atualizarSaldoParcelaPaga(
+    id: number,
+    valorParcela: Decimal,
+  ): Promise<ContaEntity> {
+    return await this.prisma.conta.update({
+      where: {
+        id,
+      },
+      data: {
+        saldo: {
+          decrement: valorParcela,
+        },
       },
     });
   }
