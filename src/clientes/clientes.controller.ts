@@ -57,7 +57,7 @@ export class ClientesController {
 
   @Patch(':id')
   async update(
-    @Param('id') id: string,
+    @Param('id') id: number,
     @Body() updateClienteDto: UpdateClienteDto,
   ) {
     console.log({ updateClienteDto });

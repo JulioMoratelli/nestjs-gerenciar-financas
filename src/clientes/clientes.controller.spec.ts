@@ -52,10 +52,9 @@ const novoCliente = new ClientesEntity({
 });
 
 const updateCliente = new ClientesEntity({
-  id: 3,
-  email: 'string1231321',
-  cpf: 'string123131',
-  nome: 'string123131',
+  email: 'strin@ggggggggggggggg.com',
+  cpf: '24021874844',
+  nome: 'stringgggggggggggggg',
   sobrenome: 'string',
 });
 
@@ -167,17 +166,16 @@ describe('ClientesController', () => {
     it('cliente atualizado com sucesso', async () => {
       //arrange
       const body: UpdateClienteDto = {
-        email: 'string1231321',
-        cpf: 'string123131',
-        nome: 'string123131',
+        nome: 'stringgggggggggggggg',
         sobrenome: 'string',
       };
 
       //act
-      const result = await clienteController.update('1', body);
+      const result = await clienteController.update(1, body);
 
       //assert
       expect(result).toEqual(updateCliente);
+      expect(clientesService.update).toHaveBeenCalledTimes(1);
     });
   });
 });
