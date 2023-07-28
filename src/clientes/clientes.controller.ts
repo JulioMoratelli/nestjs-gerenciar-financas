@@ -7,7 +7,6 @@ import {
   Patch,
   Param,
   Delete,
-  BadRequestException,
 } from '@nestjs/common';
 import { ClientesService } from './clientes.service';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
