@@ -69,7 +69,8 @@ describe('ClientesController', () => {
             findAllClienteEndereco: vi
               .fn()
               .mockResolvedValue(clientesEntityList),
-            create: vi.fn().mockResolvedValue(novoCliente),
+            createClienteComEndereco: vi.fn().mockResolvedValue(novoCliente),
+            findOne: vi.fn().mockResolvedValue(clientesEntityList[0]),
           },
         },
       ],
@@ -128,6 +129,18 @@ describe('ClientesController', () => {
 
       //assert
       expect(result).toEqual(novoCliente);
+    });
+  });
+
+  describe('findOne', () => {
+    it('Cliente mostrado com sucesso', async () => {
+      //Act
+      const result = await clienteController.findOne(1);
+
+      //Assert
+      expect(result).toEqual(clientesEntityList[0]);
+      expect(clientesService.findOne).toHaveBeenCalledTimes(1);
+      expect(clientesService.findOne).toHaveBeenCalledWith(1);
     });
   });
 });
