@@ -9,6 +9,7 @@ import { ClientesService } from './clientes.service';
 import { vi } from 'vitest';
 import { ClientesEntity } from './entities/cliente.entity';
 import { ClienteComEnderecoDto } from './dto/clienteEndereco.dto';
+import { UpdateClienteDto } from './dto/update-cliente.dto';
 
 const clientesEntityList: ClientesEntity[] = [
   new ClientesEntity({
@@ -33,9 +34,10 @@ const clientesEntityList: ClientesEntity[] = [
 ];
 
 const novoCliente = new ClientesEntity({
-  email: 'string',
-  cpf: 'string',
-  nome: 'string',
+  id: 3,
+  email: 'string1231321',
+  cpf: 'string123131',
+  nome: 'string123131',
   sobrenome: 'string',
   enderecos: [
     {
@@ -47,6 +49,14 @@ const novoCliente = new ClientesEntity({
       cep: 123,
     },
   ],
+});
+
+const updateCliente = new ClientesEntity({
+  id: 3,
+  email: 'string1231321',
+  cpf: 'string123131',
+  nome: 'string123131',
+  sobrenome: 'string',
 });
 
 describe('ClientesController', () => {
@@ -71,6 +81,7 @@ describe('ClientesController', () => {
               .mockResolvedValue(clientesEntityList),
             createClienteComEndereco: vi.fn().mockResolvedValue(novoCliente),
             findOne: vi.fn().mockResolvedValue(clientesEntityList[0]),
+            update: vi.fn().mockResolvedValue(updateCliente),
           },
         },
       ],
@@ -152,5 +163,21 @@ describe('ClientesController', () => {
     });
   });
 
-  
+  describe('update', () => {
+    it('cliente atualizado com sucesso', async () => {
+      //arrange
+      const body: UpdateClienteDto = {
+        email: 'string1231321',
+        cpf: 'string123131',
+        nome: 'string123131',
+        sobrenome: 'string',
+      };
+
+      //act
+      const result = await clienteController.update('1', body);
+
+      //assert
+      expect(result).toEqual(updateCliente);
+    });
+  });
 });
