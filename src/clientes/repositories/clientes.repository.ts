@@ -52,7 +52,7 @@ export class ClientesRepository {
       include: {
         enderecos: {
           select: {
-            id: true,
+            id: false,
             rua: true,
             bairro: true,
             numero: true,

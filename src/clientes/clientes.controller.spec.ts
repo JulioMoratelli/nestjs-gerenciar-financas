@@ -12,11 +12,23 @@ import { ClienteComEnderecoDto } from './dto/clienteEndereco.dto';
 
 const clientesEntityList: ClientesEntity[] = [
   new ClientesEntity({
+    dataCriado: new Date(),
+    dataAlterado: new Date(),
     id: 1,
     email: 'string',
     cpf: '240121874844',
     nome: 'string',
     sobrenome: 'string',
+    enderecos: [
+      {
+        rua: 'string',
+        numero: 123,
+        bairro: 'string',
+        complemento: 'string',
+        cidade: 'string',
+        cep: 123,
+      },
+    ],
   }),
 ];
 
@@ -25,17 +37,22 @@ const novoCliente = new ClientesEntity({
   cpf: 'string',
   nome: 'string',
   sobrenome: 'string',
-  // rua: 'string',
-  // numero: 123,
-  // bairro: 'string',
-  // complemento: 'string',
-  // cidade: 'string',
-  // cep: 123,
+  enderecos: [
+    {
+      rua: 'string',
+      numero: 123,
+      bairro: 'string',
+      complemento: 'string',
+      cidade: 'string',
+      cep: 123,
+    },
+  ],
 });
 
 describe('ClientesController', () => {
   let clienteController: ClientesController;
   let clientesService: ClientesService;
+  let prisma: PrismaService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -58,13 +75,15 @@ describe('ClientesController', () => {
       ],
     }).compile();
 
-    clienteController = module.get<ClientesController>(ClientesController);
+    prisma = module.get<PrismaService>(PrismaService);
     clientesService = module.get<ClientesService>(ClientesService);
+    clienteController = new ClientesController(clientesService, prisma);
   });
 
   it('should be defined', () => {
     expect(clienteController).toBeDefined();
     expect(clientesService).toBeDefined();
+    expect(prisma).toBeDefined();
   });
 
   describe('find all', () => {

@@ -2,6 +2,14 @@ import { Cliente } from '@prisma/client';
 import { Decimal } from '@prisma/client/runtime';
 import { Exclude, Expose } from 'class-transformer';
 
+interface Endereco {
+  rua: string;
+  numero: number;
+  bairro: string;
+  complemento: string;
+  cidade: string;
+  cep: number;
+}
 export class ClientesEntity implements Cliente {
   dataCriado: Date;
   dataAlterado: Date;
@@ -16,12 +24,14 @@ export class ClientesEntity implements Cliente {
   @Exclude()
   sobrenome: string;
 
+  enderecos: Endereco[];
+
   constructor(data?: Partial<ClientesEntity>) {
     Object.assign(this, data);
   }
 
   @Expose()
-  get nomeCompleto(): string {
+  nomeCompleto(): string {
     return this.nome + ' ' + this.sobrenome;
   }
 }
