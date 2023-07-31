@@ -109,7 +109,7 @@ export class LancamentosService {
       );
     }
 
-    await this.parcelaRepository.removeParcelaComLancamento(id);
+    await this.parcelaRepository.removeParcelaComLancamento(id, trx);
 
     return this.repository.remove(clienteId, id, trx);
   }

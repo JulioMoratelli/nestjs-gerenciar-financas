@@ -3,6 +3,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateParcelaDto } from '../dto/create-parcela.dto';
 import { ParcelaEntity } from '../entities/parcela.entity';
 import { Prisma } from '@prisma/client';
+import { UpdateParcelaRepositoryDto } from '../dto/update-parcela-repository-dto';
 
 @Injectable()
 export class ParcelasRepository {
@@ -46,7 +47,7 @@ export class ParcelasRepository {
   update(
     clienteId: number,
     id: number,
-    contaId,
+    updateParcelaRepositoryDto: UpdateParcelaRepositoryDto,
     trx: Prisma.TransactionClient,
   ): Promise<ParcelaEntity> {
     return trx.parcela.update({
@@ -54,7 +55,7 @@ export class ParcelasRepository {
         clienteId,
         id,
       },
-      data: contaId,
+      data: updateParcelaRepositoryDto,
     });
   }
 
@@ -72,31 +73,34 @@ export class ParcelasRepository {
   //   });
   // }
 
-  removeParcelaComLancamento(lancamentoId: number) {
-    return this.prisma.parcela.deleteMany({
+  removeParcelaComLancamento(
+    lancamentoId: number,
+    trx: Prisma.TransactionClient,
+  ) {
+    return trx.parcela.deleteMany({
       where: {
         lancamentoId,
       },
     });
   }
 
-  atualizarStatusPagamento(clienteId: number, id: number, status: boolean) {
-    return this.prisma.parcela.update({
-      where: {
-        clienteId,
-        id,
-      },
-      data: { pago: status },
-    });
-  }
+  // atualizarStatusPagamento(clienteId: number, id: number, status: boolean) {
+  //   return this.prisma.parcela.update({
+  //     where: {
+  //       clienteId,
+  //       id,
+  //     },
+  //     data: { pago: status },
+  //   });
+  // }
 
-  findAllLancamento(lancamentoId: number) {
-    return this.prisma.parcela.findMany({
-      where: {
-        lancamentoId,
-      },
-    });
-  }
+  // findAllLancamento(lancamentoId: number) {
+  //   return this.prisma.parcela.findMany({
+  //     where: {
+  //       lancamentoId,
+  //     },
+  //   });
+  // }
 
   findAllParcelasPagas(lancamentoId: number) {
     return this.prisma.parcela.findMany({

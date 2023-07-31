@@ -1,12 +1,11 @@
 import { ContaRepository } from './../contas/repositories/conta.repository';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateParcelaDto } from './dto/create-parcela.dto';
-import { UpdateParcelaDto } from './dto/update-parcela.dto';
 import { ParcelasRepository } from './repository/parcelas.repository';
 import { Decimal } from '@prisma/client/runtime';
 import { addDays } from 'date-fns';
 import { ClientesRepository } from 'src/clientes/repositories/clientes.repository';
-import { LancamentosRepository } from 'src/lancamentos/repositories/lancamentos.repository';
+import { UpdateParcelaDto } from './dto/update-parcela.dto';
 
 @Injectable()
 export class ParcelasService {
@@ -14,7 +13,6 @@ export class ParcelasService {
     private readonly repository: ParcelasRepository,
     private contaRepository: ContaRepository,
     private clienteRepository: ClientesRepository,
-    private lancamento: LancamentosRepository,
   ) {}
 
   async createParcelasComLancamento(
@@ -102,19 +100,23 @@ export class ParcelasService {
     // );
 
     if (updateParcelaDto.pago === true) {
-      await this.IdentificandoPagamento(clienteId, id, contaId);
+      await this.IdentificandoPagamento(clienteId, id, contaId, trx);
     } else if (updateParcelaDto.pago === false) {
-      await this.identificarReversao(clienteId, id, updateParcelaDto.contaId);
+      await this.identificarReversao(
+        clienteId,
+        id,
+        updateParcelaDto.contaId,
+        trx,
+      );
     }
-
-    // return atualizarParcela;
   }
 
-  // async remove() {
-  //   throw new Error('A parcela não pode ser excluida');
-  // }
-
-  async IdentificandoPagamento(clienteId: number, id: number, contaId: number) {
+  async IdentificandoPagamento(
+    clienteId: number,
+    id: number,
+    contaId: number,
+    trx,
+  ) {
     const parcela = await this.repository.findOne(clienteId, id);
 
     if (!parcela) {
@@ -139,11 +141,29 @@ export class ParcelasService {
       parcela.valor,
     );
 
+    const statusParcela = true;
+
+    // const updateParcelaRepositoryDto = {
+    //   pago: statusParcela,
+    //   contaId: contaId,
+    //   dataAlterado: new Date(),
+    // };
+
     // faltou mudar a parcela & lançamento
-    await this.repository.atualizarStatusPagamento(clienteId, id, true);
+    await this.repository.update(
+      clienteId,
+      id,
+      { pago: statusParcela, contaId: contaId, dataAlterado: new Date() },
+      trx,
+    );
   }
 
-  async identificarReversao(clienteId: number, id: number, contaId: number) {
+  async identificarReversao(
+    clienteId: number,
+    id: number,
+    contaId: number,
+    trx,
+  ) {
     const parcela = await this.repository.findOne(clienteId, id);
 
     if (!parcela) {
@@ -165,8 +185,19 @@ export class ParcelasService {
 
     await this.contaRepository.removendoValorSaldoConta(contaId, parcela.valor);
 
+    const statusParcela = false;
+
     // faltou mudar a parcela & lançamento
-    await this.repository.atualizarStatusPagamento(clienteId, id, false);
+    await this.repository.update(
+      clienteId,
+      id,
+      {
+        pago: statusParcela,
+        contaId: contaId,
+        dataAlterado: new Date(),
+      },
+      trx,
+    );
   }
 
   // async atualizarStatusLancamento(clienteId: number, lancamentoId: number) {

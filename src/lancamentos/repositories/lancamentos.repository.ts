@@ -60,13 +60,50 @@ export class LancamentosRepository {
     });
   }
 
-  atualizarStatusLancamento(clienteId: number, id: number, status: string) {
-    return this.prisma.lancamento.update({
+  async atualizarStatusLancamento(clienteId: number, id: number) {
+    const lancamento = this.prisma.lancamento.findUnique({
       where: {
         clienteId,
         id,
       },
-      data: { status: status },
+      include: {
+        parcela: true,
+      },
     });
+
+    const todasParcelas = lancamento.parcela.length;
+
+    const parcelasPasgas = await this.prisma.parcela.count({
+      where: {
+        lancamentoId: id,
+        pago: true,
+      },
+    });
+
+    if (parcelasPasgas === todasParcelas) {
+      return this.prisma.lancamento.update({
+        where: {
+          clienteId,
+          id,
+        },
+        data: { status: 'PAGO' },
+      });
+    } else if (parcelasPasgas === 0) {
+      return this.prisma.lancamento.update({
+        where: {
+          clienteId,
+          id,
+        },
+        data: { status: 'DÉBITO' },
+      });
+    } else {
+      return this.prisma.lancamento.update({
+        where: {
+          clienteId,
+          id,
+        },
+        data: { status: 'PARCIAL' },
+      });
+    }
   }
 }
