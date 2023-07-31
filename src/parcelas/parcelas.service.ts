@@ -30,7 +30,7 @@ export class ParcelasService {
     const dataPrimeiraParcela = primeiraParcela;
 
     for (let i = 1; i <= numeroParcela; i++) {
-      const vencimentoMensalidade = addDays(dataPrimeiraParcela, 5 * (i - 1));
+      const vencimentoMensalidade = addDays(dataPrimeiraParcela, 30 * (i - 1));
       const parcela: CreateParcelaDto = {
         lancamentoId: lancamentoId,
         numeroParcela: numeroParcela,
@@ -41,7 +41,6 @@ export class ParcelasService {
       };
       await this.repository.create(clienteId, parcela, trx);
     }
-    await this.atualizarStatusLancamento(clienteId, lancamentoId);
   }
 
   async findAll(
@@ -75,68 +74,67 @@ export class ParcelasService {
 
   async update(
     clienteId: number,
-    lancamentoId: number,
     id: number,
     updateParcelaDto: UpdateParcelaDto,
     trx,
   ) {
     const parcela = await this.repository.findOne(clienteId, id);
+    const { contaId } = updateParcelaDto;
+    const conta = await this.contaRepository.findOne(clienteId, contaId);
 
     if (!parcela) {
       throw new BadRequestException('Parcela não encontrada');
     }
 
     if (parcela.pago) {
-      throw new Error('não é possivel alterar uma parcela paga');
+      throw new BadRequestException('não é possivel alterar uma parcela paga');
     }
 
-    delete updateParcelaDto.valor;
-    const atualizarParcela = this.repository.update(
-      clienteId,
-      lancamentoId,
-      id,
-      updateParcelaDto,
-      trx,
-    );
+    if (!conta) {
+      throw new BadRequestException('Conta não existe');
+    }
 
-    // a regra de pagar/despagar uma parcela não deve ser feita no update da parcela,
-    // e sim apenas nos métodos exclusivos pra isso
+    // const atualizarParcela = this.repository.update(
+    //   clienteId,
+    //   id,
+    //   contaId,
+    //   trx,
+    // );
 
     if (updateParcelaDto.pago === true) {
-      await this.IdentificandoPagamento(
-        clienteId,
-        id,
-        updateParcelaDto.contaId,
-      );
+      await this.IdentificandoPagamento(clienteId, id, contaId);
     } else if (updateParcelaDto.pago === false) {
       await this.identificarReversao(clienteId, id, updateParcelaDto.contaId);
     }
 
-    await this.atualizarStatusLancamento(clienteId, lancamentoId);
-
-    return atualizarParcela;
+    // return atualizarParcela;
   }
 
-  async remove() {
-    throw new Error('A parcela não pode ser excluida');
-  }
+  // async remove() {
+  //   throw new Error('A parcela não pode ser excluida');
+  // }
 
   async IdentificandoPagamento(clienteId: number, id: number, contaId: number) {
     const parcela = await this.repository.findOne(clienteId, id);
-
-    // console.log(parcela);
-    // console.log(conta);
-    // console.log(novoSaldo);
 
     if (!parcela) {
       throw new BadRequestException('Parcela não existe');
     }
 
-    if (parcela.pago) {
-      throw new BadRequestException('Parcela já foi paga');
+    if (!parcela.pago) {
+      throw new BadRequestException('Essa parcela não esta paga');
     }
 
-    await this.contaRepository.atualizarSaldoParcelaPaga(
+    const conta = await this.contaRepository.findOne(
+      clienteId,
+      parcela.contaId,
+    );
+
+    if (!conta) {
+      throw new BadRequestException('conta não existe');
+    }
+
+    await this.contaRepository.adicionandoValorSaldoConta(
       contaId,
       parcela.valor,
     );
@@ -156,12 +154,6 @@ export class ParcelasService {
       throw new BadRequestException('Essa parcela não esta paga');
     }
 
-    // esse if não precisaria ser feito pq teoricamente se a parcela tem uma conta_id e não está
-    // paga, algo mto errado já aconteceu antes 😅
-    // if (!parcela.contaId) {
-    //   throw new BadRequestException('Não foi informado uma conta');
-    // }
-
     const conta = await this.contaRepository.findOne(
       clienteId,
       parcela.contaId,
@@ -171,38 +163,38 @@ export class ParcelasService {
       throw new BadRequestException('conta não existe');
     }
 
-    await this.contaRepository.atualizarSaldoCredito(contaId, parcela.valor);
+    await this.contaRepository.removendoValorSaldoConta(contaId, parcela.valor);
 
     // faltou mudar a parcela & lançamento
     await this.repository.atualizarStatusPagamento(clienteId, id, false);
   }
 
-  async atualizarStatusLancamento(clienteId: number, lancamentoId: number) {
-    const lancamentos = await this.lancamento.findOne(clienteId, lancamentoId);
+  // async atualizarStatusLancamento(clienteId: number, lancamentoId: number) {
+  //   const lancamentos = await this.lancamento.findOne(clienteId, lancamentoId);
 
-    if (!lancamentos) {
-      throw new BadRequestException('lancamento não encontrado');
-    }
+  //   if (!lancamentos) {
+  //     throw new BadRequestException('lancamento não encontrado');
+  //   }
 
-    const parcelas = await this.repository.findAllLancamento(lancamentoId);
+  //   const parcelas = await this.repository.findAllLancamento(lancamentoId);
 
-    const parcelasPagas = parcelas.every((parcela) => parcela.pago);
-    const parcelasNaoPagas = parcelas.every((parcela) => !parcela.pago);
+  //   const parcelasPagas = parcelas.every((parcela) => parcela.pago);
+  //   const parcelasNaoPagas = parcelas.every((parcela) => !parcela.pago);
 
-    let statusLancamentos = null;
+  //   let statusLancamentos = null;
 
-    if (parcelasPagas) {
-      statusLancamentos = 'PAGO';
-    } else if (parcelasNaoPagas) {
-      statusLancamentos = 'DÉBITO';
-    } else {
-      statusLancamentos = 'PARCIAL';
-    }
+  //   if (parcelasPagas) {
+  //     statusLancamentos = 'PAGO';
+  //   } else if (parcelasNaoPagas) {
+  //     statusLancamentos = 'DÉBITO';
+  //   } else {
+  //     statusLancamentos = 'PARCIAL';
+  //   }
 
-    await this.lancamento.atualizarStatusLancamento(
-      clienteId,
-      lancamentoId,
-      statusLancamentos,
-    );
-  }
+  //   await this.lancamento.atualizarStatusLancamento(
+  //     clienteId,
+  //     lancamentoId,
+  //     statusLancamentos,
+  //   );
+  // }
 }

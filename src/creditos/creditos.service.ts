@@ -39,7 +39,7 @@ export class CreditosService {
   ) {
     // console.log(novoSaldo);
 
-    await this.contaRepository.atualizarSaldoCredito(contaId, valor);
+    await this.contaRepository.adicionandoValorSaldoConta(contaId, valor);
     await this.clienteService.atualizarSaldoCliente(clienteId);
   }
 

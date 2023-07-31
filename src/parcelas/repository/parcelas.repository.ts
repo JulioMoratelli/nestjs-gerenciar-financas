@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateParcelaDto } from '../dto/create-parcela.dto';
 import { ParcelaEntity } from '../entities/parcela.entity';
-import { UpdateParcelaDto } from '../dto/update-parcela.dto';
 import { Prisma } from '@prisma/client';
 
 @Injectable()
@@ -46,34 +45,32 @@ export class ParcelasRepository {
 
   update(
     clienteId: number,
-    lancamentoId: number,
     id: number,
-    updateParcelaDto: UpdateParcelaDto,
+    contaId,
     trx: Prisma.TransactionClient,
   ): Promise<ParcelaEntity> {
     return trx.parcela.update({
       where: {
         clienteId,
-        lancamentoId,
         id,
       },
-      data: updateParcelaDto,
+      data: contaId,
     });
   }
 
-  remove(
-    clienteId: number,
-    lancamentoId: number,
-    id: number,
-  ): Promise<ParcelaEntity> {
-    return this.prisma.parcela.delete({
-      where: {
-        clienteId,
-        lancamentoId,
-        id,
-      },
-    });
-  }
+  // remove(
+  //   clienteId: number,
+  //   lancamentoId: number,
+  //   id: number,
+  // ): Promise<ParcelaEntity> {
+  //   return this.prisma.parcela.delete({
+  //     where: {
+  //       clienteId,
+  //       lancamentoId,
+  //       id,
+  //     },
+  //   });
+  // }
 
   removeParcelaComLancamento(lancamentoId: number) {
     return this.prisma.parcela.deleteMany({

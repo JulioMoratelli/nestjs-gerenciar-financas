@@ -57,7 +57,7 @@ export class ContaRepository {
     });
   }
 
-  async atualizarSaldoCredito(
+  async adicionandoValorSaldoConta(
     id: number,
     valorParcela: Decimal,
   ): Promise<ContaEntity> {
@@ -73,7 +73,7 @@ export class ContaRepository {
     });
   }
 
-  async atualizarSaldoParcelaPaga(
+  async removendoValorSaldoConta(
     id: number,
     valorParcela: Decimal,
   ): Promise<ContaEntity> {

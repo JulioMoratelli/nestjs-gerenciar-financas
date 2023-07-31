@@ -1,13 +1,5 @@
 import { ExtendedRequest } from './../middleware/extended-request.interface';
-import {
-  Controller,
-  Get,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  Req,
-} from '@nestjs/common';
+import { Controller, Get, Body, Patch, Param, Req } from '@nestjs/common';
 import { ParcelasService } from './parcelas.service';
 import { UpdateParcelaDto } from './dto/update-parcela.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -36,28 +28,21 @@ export class ParcelasController {
   @Patch(':id')
   async update(
     @Req() request: ExtendedRequest,
-    @Param('lancamentoId') lancamentoId: number,
     @Param('id') id: string,
     @Body() updateParcelaDto: UpdateParcelaDto,
   ) {
     const clienteId = request.clienteId;
 
     return await this.prisma.$transaction(async (trx) => {
-      return this.parcelasService.update(
-        clienteId,
-        lancamentoId,
-        +id,
-        updateParcelaDto,
-        trx,
-      );
+      return this.parcelasService.update(clienteId, +id, updateParcelaDto, trx);
     });
   }
 
   // não pode ter exclusão de parcela !!
-  @Delete(':id')
-  async remove() {
-    return await this.prisma.$transaction(async () => {
-      return this.parcelasService.remove();
-    });
-  }
+  // @Delete(':id')
+  // async remove() {
+  //   return await this.prisma.$transaction(async () => {
+  //     return this.parcelasService.remove();
+  //   });
+  // }
 }
