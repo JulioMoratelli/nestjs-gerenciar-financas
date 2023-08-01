@@ -1,13 +1,7 @@
 import { Decimal } from '@prisma/client/runtime';
-import {
-  IsDateString,
-  IsDecimal,
-  IsNotEmpty,
-  IsNumber,
-  IsString,
-} from 'class-validator';
+import { IsDecimal, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
-export class CreateLancamentoDto {
+export class CreateLancamentoSemVencimentoDto {
   @IsDecimal()
   @IsNotEmpty()
   valorTotal: Decimal;
@@ -23,8 +17,4 @@ export class CreateLancamentoDto {
   @IsString()
   @IsNotEmpty()
   descricao: string;
-
-  @IsDateString()
-  @IsNotEmpty()
-  primeiroVencimento: string;
 }

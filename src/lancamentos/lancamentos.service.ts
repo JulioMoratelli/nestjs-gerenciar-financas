@@ -40,32 +40,43 @@ export class LancamentosService {
   ) {
     const cliente = await this.clienteRepository.findOne(clienteId);
 
+    const {
+      valorTotal,
+      numeroParcelas,
+      descricao,
+      status,
+      primeiroVencimento,
+    } = createLancamentoDto;
+
     if (!cliente) {
       throw new BadRequestException('Esse cliente não existe');
     }
 
+    const dadosLancamento = {
+      valorTotal,
+      numeroParcelas,
+      status,
+      descricao,
+    };
+
     const lancamento = await this.repository.create(
       clienteId,
-      createLancamentoDto,
+      dadosLancamento,
       trx,
     );
 
-    const primeiraParcela = createLancamentoDto.primeiroVencimento;
-
-    // aqui não precisaria desse if pq nesse ponto o lançamento TEM que ter sido criado
-
-    const { id, numeroParcelas, valorTotal } = lancamento;
+    const primeiraParcela = new Date(primeiroVencimento);
 
     await this.parcela.createParcelasComLancamento(
       clienteId,
-      id,
+      lancamento.id,
       numeroParcelas,
       valorTotal,
       primeiraParcela,
       trx,
     );
 
-    // console.log(lancamento);
+    // await this.repository.atualizarStatusLancamento(clienteId, lancamento.id);
 
     return lancamento;
   }

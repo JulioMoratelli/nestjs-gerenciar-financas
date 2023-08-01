@@ -6,6 +6,7 @@ import { Decimal } from '@prisma/client/runtime';
 import { addDays } from 'date-fns';
 import { ClientesRepository } from 'src/clientes/repositories/clientes.repository';
 import { UpdateParcelaDto } from './dto/update-parcela.dto';
+import { LancamentosRepository } from 'src/lancamentos/repositories/lancamentos.repository';
 
 @Injectable()
 export class ParcelasService {
@@ -13,6 +14,7 @@ export class ParcelasService {
     private readonly repository: ParcelasRepository,
     private contaRepository: ContaRepository,
     private clienteRepository: ClientesRepository,
+    private lancamentoRepository: LancamentosRepository,
   ) {}
 
   async createParcelasComLancamento(
@@ -123,23 +125,17 @@ export class ParcelasService {
       throw new BadRequestException('Parcela não existe');
     }
 
-    if (!parcela.pago) {
-      throw new BadRequestException('Essa parcela não esta paga');
+    if (parcela.pago) {
+      throw new BadRequestException('Essa parcela esta paga');
     }
 
-    const conta = await this.contaRepository.findOne(
-      clienteId,
-      parcela.contaId,
-    );
+    const conta = await this.contaRepository.findOne(clienteId, contaId);
 
     if (!conta) {
       throw new BadRequestException('conta não existe');
     }
 
-    await this.contaRepository.adicionandoValorSaldoConta(
-      contaId,
-      parcela.valor,
-    );
+    await this.contaRepository.removendoValorSaldoConta(contaId, parcela.valor);
 
     const statusParcela = true;
 
@@ -183,11 +179,14 @@ export class ParcelasService {
       throw new BadRequestException('conta não existe');
     }
 
-    await this.contaRepository.removendoValorSaldoConta(contaId, parcela.valor);
+    await this.contaRepository.adicionandoValorSaldoConta(
+      contaId,
+      parcela.valor,
+    );
 
     const statusParcela = false;
 
-    // faltou mudar a parcela & lançamento
+    // faltou mudar a parcela & lçanamento
     await this.repository.update(
       clienteId,
       id,
@@ -198,6 +197,8 @@ export class ParcelasService {
       },
       trx,
     );
+
+    await this.lancamentoRepository.atualizarStatusLancamento(clienteId, );
   }
 
   // async atualizarStatusLancamento(clienteId: number, lancamentoId: number) {

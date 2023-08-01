@@ -1,9 +1,9 @@
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
-import { CreateLancamentoDto } from '../dto/create-lancamento.dto';
 import { UpdateLancamentoDto } from '../dto/update-lancamento.dto';
 import { LancamentoEntity } from '../entities/lancamento.entity';
 import { Prisma } from '@prisma/client';
+import { CreateLancamentoSemVencimentoDto } from '../dto/createLancamentoVenc.dto';
 
 @Injectable()
 export class LancamentosRepository {
@@ -11,11 +11,11 @@ export class LancamentosRepository {
 
   async create(
     cliente: number,
-    createLancamentoDto: CreateLancamentoDto,
+    createLancamentoSemVencimentoDto: CreateLancamentoSemVencimentoDto,
     trx: Prisma.TransactionClient,
   ): Promise<LancamentoEntity> {
     return trx.lancamento.create({
-      data: { clienteId: cliente, ...createLancamentoDto },
+      data: { clienteId: cliente, ...createLancamentoSemVencimentoDto },
     });
   }
 
