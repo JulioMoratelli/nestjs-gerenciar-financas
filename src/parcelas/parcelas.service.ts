@@ -152,6 +152,11 @@ export class ParcelasService {
       { pago: statusParcela, contaId: contaId, dataAlterado: new Date() },
       trx,
     );
+
+    await this.lancamentoRepository.atualizarStatusLancamento(
+      clienteId,
+      parcela.lancamentoId,
+    );
   }
 
   async identificarReversao(
@@ -198,7 +203,10 @@ export class ParcelasService {
       trx,
     );
 
-    await this.lancamentoRepository.atualizarStatusLancamento(clienteId, );
+    await this.lancamentoRepository.atualizarStatusLancamento(
+      clienteId,
+      parcela.lancamentoId,
+    );
   }
 
   // async atualizarStatusLancamento(clienteId: number, lancamentoId: number) {
