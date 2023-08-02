@@ -66,9 +66,6 @@ export class LancamentosRepository {
         clienteId,
         id,
       },
-      include: {
-        parcela: true,
-      },
     });
 
     const todasParcelas = lancamento.parcela.length;
@@ -88,7 +85,7 @@ export class LancamentosRepository {
         },
         data: { status: 'PAGO' },
       });
-    } else if (parcelasPasgas == 0) {
+    } else if (parcelasPasgas === 0) {
       return this.prisma.lancamento.update({
         where: {
           clienteId,

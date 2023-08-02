@@ -75,10 +75,8 @@ export class LancamentosService {
       primeiraParcela,
       trx,
     );
-
-    // await this.repository.atualizarStatusLancamento(clienteId, lancamento.id);
-
     return lancamento;
+    // await this.repository.atualizarStatusLancamento(clienteId, lancamento.id);
   }
 
   async findAll(clienteId: number) {

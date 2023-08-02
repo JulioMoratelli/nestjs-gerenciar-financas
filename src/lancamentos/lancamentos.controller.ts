@@ -48,7 +48,7 @@ export class LancamentosController {
   async findOne(@Req() request: ExtendedRequest, @Param('id') id: number) {
     const clienteId = request.clienteId;
 
-    return this.lancamentosService.findOne(+id, clienteId);
+    return this.lancamentosService.findOne(clienteId, +id);
   }
 
   @Patch(':id')
