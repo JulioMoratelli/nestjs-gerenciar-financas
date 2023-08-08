@@ -5,6 +5,9 @@
   "compilerOptions": {
     "deleteOutDir": true,
     "builder": "swc",
+    "options": {
+      "swcrcPath": "infrastructure/.swcrc"
+    },
     "typeCheck": true,
     "plugins": ["@nestjs/swagger/plugin"]
   }
